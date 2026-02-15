@@ -4,6 +4,10 @@ export const AREAS = ['Refrigeração', 'Energia', 'Ar-condicionado', 'Água'] a
 export const STATUS = ['Aberto', 'Em andamento', 'Resolvido', 'Cancelado'] as const;
 export const PRIORIDADES = ['Crítica', 'Alta', 'Média', 'Baixa'] as const;
 
+export type AreaType = typeof AREAS[number];
+export type StatusType = typeof STATUS[number];
+export type PrioridadeType = typeof PRIORIDADES[number];
+
 export const ticketSchema = z.object({
   id: z.number().optional(), // ID gerado pelo backend
   titulo: z.string().min(5, 'Título deve ter pelo menos 5 caracteres'),
@@ -23,9 +27,9 @@ export type Ticket = z.infer<typeof ticketSchema>;
 export interface TicketFilters {
   page: number;
   pageSize: number;
-  status?: string;
-  prioridade?: string;
-  area?: string;
+  status?: StatusType;
+  prioridade?: PrioridadeType;
+  area?: AreaType;
   search?: string;
 }
 

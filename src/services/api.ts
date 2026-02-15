@@ -22,21 +22,13 @@ export async function fetchTickets(filters: TicketFilters): Promise<PaginatedRes
     const searchLower = filters.search.toLowerCase();
     data = data.filter((t) => 
       t.titulo.toLowerCase().includes(searchLower) || 
-      t.id.toString().includes(searchLower)
+      t.id!.toString().includes(searchLower)
     );
   }
 
-  if (filters.status && filters.status !== 'Todos') {
-    data = data.filter((t) => t.status === filters.status);
-  }
-
-  if (filters.area && filters.area !== 'Todas') {
-    data = data.filter((t) => t.area === filters.area);
-  }
-
-  if (filters.prioridade && filters.prioridade !== 'Todas') {
-    data = data.filter((t) => t.prioridade === filters.prioridade);
-  }
+  if (filters.status) data = data.filter((t) => t.status === filters.status);
+  if (filters.area) data = data.filter((t) => t.area === filters.area);
+  if (filters.prioridade) data = data.filter((t) => t.prioridade === filters.prioridade);
 
   data.sort((a, b) => {
     // Primeiro critério: Data (mais recente primeiro)
@@ -74,8 +66,9 @@ export async function fetchTicketById(id: number): Promise<Ticket | undefined> {
 export async function createTicket(newTicket: Omit<Ticket, 'id' | 'abertura' | 'ultimaAtualizacao'>): Promise<Ticket> {
   await new Promise((resolve) => setTimeout(resolve, DELAY_MS));
   
+  // Idealmente seria criado pelo backend, mas como estamos simulando, vamos criar aqui mesmo
   const db = getMockDatabase();
-  const nextId = Math.max(...db.map(t => t.id)) + 1;
+  const nextId = Math.max(...db.map(t => t.id!)) + 1;
   
   const ticket: Ticket = {
     ...newTicket,
