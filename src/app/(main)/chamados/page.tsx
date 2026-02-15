@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import { useState } from 'react';
 import { Table, Button, Typography, Space, Tooltip } from 'antd';
 import { useTickets } from '@/hooks/useTickets';
 import { TicketFilters } from '@/components/domain/TicketFilters';
@@ -12,17 +12,22 @@ import { ptBR } from 'date-fns/locale';
 import { ReloadOutlined, PlusOutlined, EyeOutlined } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
 import { AreaType, PrioridadeType, StatusType, Ticket } from '@/types/ticket';
+import { TicketDetailDrawer } from '@/components/domain/TicketDetailDrawer';
+import { CreateTicketModal } from '@/components/domain/CreateTicketModal';
 
 const { Title } = Typography;
 
 export default function ChamadosPage() {
+  const [selectedTicketId, setSelectedTicketId] = useState<number | null>(null);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+
   const router = useRouter();
   const searchParams = useSearchParams();
 
   // 1. Ler Estado da URL (ou usar defaults)
   const page = Number(searchParams.get('page')) || 1;
   const pageSize = Number(searchParams.get('pageSize')) || 10;
-  const status = searchParams.get('status') as StatusType  || undefined;
+  const status = searchParams.get('status') as StatusType || undefined;
   const prioridade = searchParams.get('prioridade') as PrioridadeType || undefined;
   const area = searchParams.get('area') as AreaType || undefined;
   const search = searchParams.get('search') || undefined;
@@ -41,13 +46,13 @@ export default function ChamadosPage() {
   // 3. Função para Atualizar URL (e consequentemente o filtro)
   const handleFilterChange = (key: string, value: any) => {
     const params = new URLSearchParams(searchParams.toString());
-    
+
     if (value && value !== 'Todos' && value !== 'Todas') {
       params.set(key, value);
     } else {
       params.delete(key);
     }
-    
+
     // Resetar para página 1 ao filtrar
     if (key !== 'page') {
       params.set('page', '1');
@@ -114,11 +119,10 @@ export default function ChamadosPage() {
       width: 80,
       align: 'center',
       render: (_, record) => (
-        <Button 
-          type="text" 
-          icon={<EyeOutlined />} 
-          onClick={() => console.log('Abrir Drawer para:', record.id)}
-        />
+        <Button
+          type="text"
+          icon={<EyeOutlined />}
+          onClick={() => setSelectedTicketId(record.id!)} />
       ),
     },
   ];
@@ -131,15 +135,15 @@ export default function ChamadosPage() {
           <Button icon={<ReloadOutlined />} onClick={() => refetch()} loading={isFetching}>
             Atualizar
           </Button>
-          <Button type="primary" icon={<PlusOutlined />} onClick={() => console.log('Novo chamado')}>
+          <Button type="primary" icon={<PlusOutlined />} onClick={() => setIsCreateModalOpen(true)}>
             Novo Chamado
           </Button>
         </Space>
       </div>
 
-      <TicketFilters 
-        filters={{ status, prioridade, area, search }} 
-        onFilterChange={handleFilterChange} 
+      <TicketFilters
+        filters={{ status, prioridade, area, search }}
+        onFilterChange={handleFilterChange}
       />
 
       <Table
@@ -157,6 +161,8 @@ export default function ChamadosPage() {
         onChange={handleTableChange}
         scroll={{ x: 800 }}
       />
+      <TicketDetailDrawer ticketId={selectedTicketId} onClose={() => setSelectedTicketId(null)} />
+      <CreateTicketModal visible={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)} />
     </div>
   );
 }
