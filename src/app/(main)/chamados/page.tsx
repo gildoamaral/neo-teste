@@ -11,7 +11,7 @@ import type { TablePaginationConfig } from 'antd';
 import type { SorterResult } from 'antd/es/table/interface';
 import { useChamados, useChamadoDetalhe } from '@/hooks/useChamados';
 import { DrawerDetail, FilterBar } from '@/components/chamados';
-import { ErrorState, EmptyState, ChamadoCard } from '@/components/ui';
+import { ErrorState, EmptyState, ChamadoCard, FloatingAddButton } from '@/components/ui';
 import { getChamadosColumns } from './chamadosColumns';
 import NovoChamadoModal from '@/components/chamados/CreateTicketModal';
 import type { ChamadoComTimeline, ChamadoFilters } from '@/types';
@@ -98,7 +98,6 @@ export default function ChamadosListView() {
         filters={filters}
         onFilterChange={updateFilter}
         onClearFilters={clearFilters}
-        onOpenModal={() => setModalOpen(true)}
       />
 
       {data && data.data.length === 0 ? (
@@ -163,6 +162,7 @@ export default function ChamadosListView() {
         loading={isLoadingDetalhe}
       />
 
+      <FloatingAddButton onClick={() => setModalOpen(true)} />
       <NovoChamadoModal open={modalOpen} onClose={() => setModalOpen(false)} />
     </>
   );
