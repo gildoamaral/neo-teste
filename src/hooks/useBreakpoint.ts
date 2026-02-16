@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useCallback, useSyncExternalStore } from "react";
 
 const BREAKPOINTS = {
   xs: 0,
@@ -19,36 +19,25 @@ interface BreakpointState {
   isMobile: boolean;
   isTablet: boolean;
   isDesktop: boolean;
-  mounted: boolean;
   isAbove: (bp: BreakpointKey) => boolean;
   isBelow: (bp: BreakpointKey) => boolean;
 }
 
+function subscribe(callback: () => void) {
+  window.addEventListener("resize", callback);
+  return () => window.removeEventListener("resize", callback);
+}
+
+function getSnapshot() {
+  return window.innerWidth;
+}
+
+function getServerSnapshot() {
+  return 1200;
+}
+
 export function useBreakpoint(): BreakpointState {
-  // Always start with desktop width to avoid hydration mismatch
-  const [width, setWidth] = useState<number>(1200);
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-    setWidth(window.innerWidth);
-
-    let rafId: number;
-
-    const handleResize = () => {
-      cancelAnimationFrame(rafId);
-      rafId = requestAnimationFrame(() => {
-        setWidth(window.innerWidth);
-      });
-    };
-
-    window.addEventListener("resize", handleResize);
-
-    return () => {
-      window.removeEventListener("resize", handleResize);
-      cancelAnimationFrame(rafId);
-    };
-  }, []);
+  const width = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 
   const getCurrent = useCallback((): BreakpointKey => {
     if (width >= BREAKPOINTS.xxl) return "xxl";
@@ -75,7 +64,6 @@ export function useBreakpoint(): BreakpointState {
     isMobile: width < BREAKPOINTS.md,
     isTablet: width < BREAKPOINTS.lg,
     isDesktop: width >= BREAKPOINTS.lg,
-    mounted,
     isAbove,
     isBelow,
   };
