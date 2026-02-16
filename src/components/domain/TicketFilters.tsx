@@ -1,16 +1,16 @@
 import React from 'react';
-import { Input, Select, Space, Card, Row, Col } from 'antd';
-import { AREAS, STATUS, PRIORIDADES, StatusType, PrioridadeType, AreaType } from '@/types/ticket';
+import { Input, Select, Card, Row, Col } from 'antd';
+import { AREAS, STATUS, PRIORIDADES } from '@/types/ticket';
 import { SearchOutlined } from '@ant-design/icons';
 
 interface TicketFiltersProps {
   filters: {
-    status?: StatusType;
-    prioridade?: PrioridadeType;
-    area?: AreaType;
+    status?: string;
+    prioridade?: string;
+    area?: string;
     search?: string;
   };
-  onFilterChange: (key: string, value: any) => void;
+  onFilterChange: (key: string, value: string) => void;
 }
 
 export const TicketFilters: React.FC<TicketFiltersProps> = ({ filters, onFilterChange }) => {

@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { Modal, Form, Input, Select, Button, message } from 'antd';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { ticketSchema, AREAS, PRIORIDADES, Ticket } from '@/types/ticket';
+import { ticketSchema, AREAS, PRIORIDADES, STATUS } from '@/types/ticket';
 import { useCreateTicket } from '@/hooks/useTickets';
 
 // Schema parcial para criação (removemos campos automáticos como ID e Datas)
@@ -11,6 +11,8 @@ const createSchema = ticketSchema.omit({
   id: true, 
   abertura: true, 
   ultimaAtualizacao: true 
+}).extend({
+  status: z.enum(STATUS)
 });
 
 type CreateTicketForm = z.infer<typeof createSchema>;
@@ -32,7 +34,6 @@ export const CreateTicketModal: React.FC<CreateTicketModalProps> = ({ visible, o
     }
   });
 
-  // Limpa o formulário quando o modal fecha/abre
   useEffect(() => {
     if (visible) reset();
   }, [visible, reset]);
@@ -55,7 +56,7 @@ export const CreateTicketModal: React.FC<CreateTicketModalProps> = ({ visible, o
       open={visible}
       onCancel={onClose}
       footer={null}
-      destroyOnClose
+      destroyOnHidden
     >
       <Form layout="vertical" onFinish={handleSubmit(onSubmit)}>
         

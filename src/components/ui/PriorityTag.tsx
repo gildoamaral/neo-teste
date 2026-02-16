@@ -1,8 +1,7 @@
 import React from 'react';
 import { Tag } from 'antd';
-import { PrioridadeType } from '@/types/ticket';
 
-const priorityColorMap: Record<PrioridadeType, string> = {
+const priorityColorMap: Record<string, string> = {
   'Crítica': '#cf1322', // Vermelho Escuro
   'Alta': '#fa8c16',    // Laranja
   'Média': '#108ee9',   // Azul
@@ -10,7 +9,7 @@ const priorityColorMap: Record<PrioridadeType, string> = {
 };
 
 interface PriorityTagProps {
-  priority: PrioridadeType;
+  priority: string;
 }
 
 export const PriorityTag: React.FC<PriorityTagProps> = ({ priority }) => {

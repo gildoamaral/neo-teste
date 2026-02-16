@@ -2,7 +2,7 @@ import React from 'react';
 import { Badge } from 'antd';
 import { STATUS, StatusType } from '@/types/ticket';
 
-const statusColorMap: Record<StatusType, "success" | "processing" | "default" | "error" | "warning"> = {
+const statusColorMap: Record<string, "success" | "processing" | "default" | "error" | "warning"> = {
   'Aberto': 'error',       // Vermelho
   'Em andamento': 'processing', // Azul
   'Resolvido': 'success',  // Verde 
@@ -14,7 +14,6 @@ interface StatusBadgeProps {
 }
 
 export const StatusBadge: React.FC<StatusBadgeProps> = ({ status }) => {
-  // Fallback seguro caso venha um status desconhecido
   const statusKey = STATUS.includes(status) ? status : 'Aberto';
   
   return (

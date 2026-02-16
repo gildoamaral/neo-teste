@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { fetchTickets, fetchTicketById, createTicket } from '@/services/api';
-import { TicketFilters, Ticket } from '@/types/ticket';
+import { TicketFilters } from '@/types/ticket';
 
 export function useTickets(filters: TicketFilters) {
   return useQuery({
