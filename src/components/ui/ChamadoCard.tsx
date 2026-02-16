@@ -27,7 +27,6 @@ export function ChamadoCard({ chamado, onClick }: ChamadoCardProps) {
       style={{ marginBottom: 8 }}
       styles={{ body: { padding: '12px 16px' } }}
     >
-      {/* Top: ID + Badges */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
         <Text
           style={{
@@ -45,12 +44,10 @@ export function ChamadoCard({ chamado, onClick }: ChamadoCardProps) {
         </Space>
       </div>
 
-      {/* Title */}
       <Text strong style={{ fontSize: 14, display: 'block', marginBottom: 8 }}>
         {chamado.titulo}
       </Text>
 
-      {/* Details row */}
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px 16px' }}>
         <Text type="secondary" style={{ fontSize: 12 }}>
           <EnvironmentOutlined style={{ marginRight: 4 }} />
@@ -62,6 +59,8 @@ export function ChamadoCard({ chamado, onClick }: ChamadoCardProps) {
             {chamado.responsavel}
           </Text>
         )}
+      </div>
+      <div>
         <Text type="secondary" style={{ fontSize: 12 }}>
           <ClockCircleOutlined style={{ marginRight: 4 }} />
           {dayjs(chamado.abertura).format('DD/MM/YY HH:mm')}

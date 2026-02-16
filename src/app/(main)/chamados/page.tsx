@@ -106,8 +106,8 @@ export default function ChamadosListView() {
           <EmptyState description="Nenhum chamado encontrado com os filtros aplicados" />
         </Card>
       ) : isMobile ? (
-        /* Mobile: card list */
-        <div>
+
+        <div className="">
           {data?.data.map((chamado) => (
             <ChamadoCard
               key={chamado.id}
@@ -116,7 +116,7 @@ export default function ChamadosListView() {
             />
           ))}
           {data && (
-            <div style={{ display: 'flex', justifyContent: 'center', padding: '12px 0' }}>
+            <div style={{ display: 'flex', justifyContent: 'center', padding: '12px 0 50px 0' }}>
               <Pagination
                 current={data.pagina}
                 pageSize={data.porPagina}

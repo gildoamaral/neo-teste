@@ -15,5 +15,5 @@ interface StatusBadgeProps {
 }
 
 export function StatusBadge({ status }: StatusBadgeProps) {
-  return <Tag color={STATUS_COLORS[status]}>{status}</Tag>;
+  return <Tag color={STATUS_COLORS[status]} style={{fontFamily: "var(--font-primary)"}}>{status}</Tag>;
 }

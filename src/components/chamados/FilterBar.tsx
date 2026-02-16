@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { Card, Row, Col, Input, Select, Button, Space } from 'antd';
-import { ClearOutlined, PlusOutlined, FilterOutlined } from '@ant-design/icons';
+import { Card, Row, Col, Input, Select, Button } from 'antd';
+import { DeleteOutlined, PlusOutlined, FilterOutlined } from '@ant-design/icons';
 import type { FilterBarProps } from '@/types';
 import { STATUS, PRIORIDADES, AREAS } from '@/types';
 import { useBreakpoint } from '@/hooks/useBreakpoint';
@@ -24,11 +24,11 @@ export function FilterBar({
   const hasActiveFilters = !!(filters.status || filters.prioridade || filters.area || filters.busca);
 
   return (
-    <Card style={{ background: "none", border: 'none', padding: 0 }} 
-      styles={{ body: { padding: "0 10px 10px 10px" } }}
+    <Card style={{ background: "none", border: 'none', padding: 0 }}
+      styles={{ body: { padding: "0 0px 10px 0px" } }}
     >
       <Row gutter={[8, 8]} align="middle">
-        <Col flex="auto">
+        <Col xs={18} sm={18} md="auto" flex="auto">
           <Search
             placeholder="Título, ID, Equipamento..."
             value={searchInput}
@@ -41,31 +41,33 @@ export function FilterBar({
             }}
           />
         </Col>
+        <Col xs={6}>
+          <Button
+            type="primary"
+            icon={<PlusOutlined />}
+            onClick={onOpenModal}
+            block={isMobile}
+          >
+            Novo
+          </Button>
+        </Col>
         {isMobile && (
-          <Col>
+          <Col xs={6}>
             <Button
               icon={<FilterOutlined />}
               onClick={() => setShowFilters(!showFilters)}
               type={hasActiveFilters ? 'primary' : 'default'}
               ghost={hasActiveFilters}
-            />
+              block
+            >Filtros</Button>
           </Col>
         )}
-        <Col>
-          <Button
-            type="primary"
-            icon={<PlusOutlined />}
-            onClick={onOpenModal}
-          >
-            {!isMobile && 'Novo'}
-          </Button>
-        </Col>
+
       </Row>
 
-      {/* Filter selects — always visible on desktop, toggled on mobile */}
       {(!isMobile || showFilters) && (
         <Row gutter={[8, 8]} style={{ marginTop: 8 }}>
-          <Col xs={24} sm={8} md={4}>
+          <Col xs={7} sm={8} md={4}>
             <Select
               placeholder="Status"
               value={filters.status}
@@ -76,7 +78,7 @@ export function FilterBar({
               size={isMobile ? 'middle' : undefined}
             />
           </Col>
-          <Col xs={24} sm={8} md={4}>
+          <Col xs={7} sm={8} md={4}>
             <Select
               placeholder="Prioridade"
               value={filters.prioridade}
@@ -87,7 +89,7 @@ export function FilterBar({
               size={isMobile ? 'middle' : undefined}
             />
           </Col>
-          <Col xs={24} sm={8} md={4}>
+          <Col xs={7} sm={8} md={4}>
             <Select
               placeholder="Área"
               value={filters.area}
@@ -98,19 +100,32 @@ export function FilterBar({
               size={isMobile ? 'middle' : undefined}
             />
           </Col>
-          <Col xs={24} sm={8} md={3}>
-            <Button
-              icon={<ClearOutlined />}
-              onClick={() => {
-                setSearchInput('');
-                onClearFilters();
-                if (isMobile) setShowFilters(false);
-              }}
-              block
-            >
-              Limpar
-            </Button>
-          </Col>
+          {!isMobile && (
+            <Col>
+              <Button
+                icon={<DeleteOutlined />}
+                onClick={() => {
+                  setSearchInput('');
+                  onClearFilters();
+                }}
+              >
+                Limpar
+              </Button>
+            </Col>
+          )}
+          {isMobile && (
+            <Col xs={3}>
+              <Button
+                icon={<DeleteOutlined />}
+                onClick={() => {
+                  setSearchInput('');
+                  onClearFilters();
+                  setShowFilters(false);
+                }}
+                block
+              />
+            </Col>
+          )}
         </Row>
       )}
 

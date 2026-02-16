@@ -1,6 +1,6 @@
 import { SiderProps } from '@/types';
 import { BellOutlined, CustomerServiceOutlined, LeftOutlined, RightOutlined } from '@ant-design/icons'
-import { Avatar, Button, Drawer, Layout, Menu, Space, Typography } from 'antd'
+import { Avatar, Button, Drawer, Layout, Menu, Typography } from 'antd'
 import { usePathname, useRouter } from 'next/navigation'
 import Logo from '../ui/Logo';
 
