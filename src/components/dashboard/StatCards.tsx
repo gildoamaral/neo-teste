@@ -5,7 +5,7 @@ import {
   FileOutlined,
   FileTextOutlined,
 } from '@ant-design/icons';
-import { StatCard } from '@/components/ui/StatCard';
+import { StatCard } from '@/components/ui';
 
 interface StatCardsProps {
   stats: {
@@ -18,8 +18,8 @@ interface StatCardsProps {
 
 export function StatCards({ stats }: StatCardsProps) {
   return (
-    <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
-      <Col xs={24} sm={12} lg={6}>
+    <Row gutter={[12, 12]} style={{ marginBottom: 24 }}>
+      <Col xs={12} sm={12} lg={6}>
         <StatCard
           title="Total de Chamados"
           value={stats.totalChamados}
@@ -28,7 +28,7 @@ export function StatCards({ stats }: StatCardsProps) {
           iconBgColor="#e6f7ff"
         />
       </Col>
-      <Col xs={24} sm={12} lg={6}>
+      <Col xs={12} sm={12} lg={6}>
         <StatCard
           title="Chamados Abertos"
           value={stats.chamadosAbertos}
@@ -37,7 +37,7 @@ export function StatCards({ stats }: StatCardsProps) {
           iconBgColor="#fff7e6"
         />
       </Col>
-      <Col xs={24} sm={12} lg={6}>
+      <Col xs={12} sm={12} lg={6}>
         <StatCard
           title="Taxa de Resolução"
           value={`${stats.taxaResolucao}%`}
@@ -46,7 +46,7 @@ export function StatCards({ stats }: StatCardsProps) {
           iconBgColor="#f6ffed"
         />
       </Col>
-      <Col xs={24} sm={12} lg={6}>
+      <Col xs={12} sm={12} lg={6}>
         <StatCard
           title="Tempo Médio de Resposta"
           value={`${stats.tempoMedioResposta}h`}

@@ -33,30 +33,31 @@ export function VolumeChamadosDiaChart({
 }: VolumeChamadosDiaChartProps) {
   return (
     <Card
-      title={<Text strong>Volume de Chamados por Dia</Text>}
+      title={<Text strong style={{ fontSize: 14 }}>Volume de Chamados por Dia</Text>}
       extra={
         <Segmented
+          size="small"
           options={[
-            { label: '15 dias', value: 15 },
-            { label: '30 dias', value: 30 },
-            { label: '45 dias', value: 45 },
+            { label: '15d', value: 15 },
+            { label: '30d', value: 30 },
+            { label: '45d', value: 45 },
           ]}
           value={days}
           onChange={(value) => onDaysChange(value as number)}
         />
       }
-      styles={{ body: { padding: '16px 24px' } }}
+      styles={{ body: { padding: '12px 16px' } }}
     >
-      <ResponsiveContainer width="100%" height={300}>
-        <LineChart data={data}>
+      <ResponsiveContainer width="100%" height={250}>
+        <LineChart data={data} margin={{ top: 5, right: 5, left: -10, bottom: 5 }}>
           <CartesianGrid strokeDasharray="3 3" vertical={false} />
           <XAxis
             dataKey="date"
-            tick={{ fontSize: 11 }}
+            tick={{ fontSize: 10 }}
             tickFormatter={(value) => format(new Date(value), 'dd/MM')}
-            interval={Math.max(1, Math.floor(data.length / 10))}
+            interval={Math.max(1, Math.floor(data.length / 8))}
           />
-          <YAxis allowDecimals={false} tick={{ fontSize: 12 }} />
+          <YAxis allowDecimals={false} tick={{ fontSize: 11 }} width={30} />
           <RechartsTooltip
             labelFormatter={(value) =>
               format(new Date(value), "dd 'de' MMMM", { locale: ptBR })
@@ -67,8 +68,8 @@ export function VolumeChamadosDiaChart({
             dataKey="chamados"
             stroke={BAR_COLOR}
             strokeWidth={2}
-            dot={{ r: 3 }}
-            activeDot={{ r: 5 }}
+            dot={{ r: 2 }}
+            activeDot={{ r: 4 }}
             name="Chamados"
           />
         </LineChart>

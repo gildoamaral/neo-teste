@@ -5,16 +5,21 @@ import {
   Table,
   Card,
   Skeleton,
+  Pagination,
 } from 'antd';
 import type { TablePaginationConfig } from 'antd';
 import type { SorterResult } from 'antd/es/table/interface';
 import { useChamados, useChamadoDetalhe } from '@/hooks/useChamados';
-import { DrawerDetail, ErrorState, EmptyState, FilterBar } from '@/components/chamados';
+import { DrawerDetail, FilterBar } from '@/components/chamados';
+import { ErrorState, EmptyState, ChamadoCard } from '@/components/ui';
 import { getChamadosColumns } from './chamadosColumns';
 import NovoChamadoModal from '@/components/chamados/CreateTicketModal';
 import type { ChamadoComTimeline, ChamadoFilters } from '@/types';
+import { useBreakpoint } from '@/hooks/useBreakpoint';
 
 export default function ChamadosListView() {
+  const { isMobile } = useBreakpoint();
+
   const [filters, setFilters] = useState<ChamadoFilters>({
     pagina: 1,
     porPagina: 15,
@@ -100,7 +105,31 @@ export default function ChamadosListView() {
         <Card>
           <EmptyState description="Nenhum chamado encontrado com os filtros aplicados" />
         </Card>
+      ) : isMobile ? (
+        /* Mobile: card list */
+        <div>
+          {data?.data.map((chamado) => (
+            <ChamadoCard
+              key={chamado.id}
+              chamado={chamado}
+              onClick={handleRowClick}
+            />
+          ))}
+          {data && (
+            <div style={{ display: 'flex', justifyContent: 'center', padding: '12px 0' }}>
+              <Pagination
+                current={data.pagina}
+                pageSize={data.porPagina}
+                total={data.total}
+                size="small"
+                showSizeChanger={false}
+                onChange={(page) => setFilters((prev) => ({ ...prev, pagina: page }))}
+              />
+            </div>
+          )}
+        </div>
       ) : (
+        /* Desktop: table */
         <Table
           dataSource={data?.data}
           columns={columns}

@@ -8,8 +8,8 @@ import {
   UserOutlined,
 } from '@ant-design/icons';
 import dayjs from 'dayjs';
-import { StatusBadge } from './StatusBadge';
-import { PriorityTag } from './PriorityTag';
+import { StatusBadge, PriorityTag } from '@/components/ui';
+import { useBreakpoint } from '@/hooks/useBreakpoint';
 import type { DrawerDetailProps } from '@/types';
 
 const { Text, Paragraph } = Typography;
@@ -49,6 +49,8 @@ const DetailItem = ({ icon, label, value }: DetailItemProps) => (
 );
 
 export function DrawerDetail({ chamado, open, onClose, loading }: DrawerDetailProps) {
+  const { isMobile } = useBreakpoint();
+
   return (
     <Drawer
       title={
@@ -65,7 +67,7 @@ export function DrawerDetail({ chamado, open, onClose, loading }: DrawerDetailPr
               #{chamado.id}
             </p>
             <h2 style={{
-              fontSize: 18,
+              fontSize: isMobile ? 16 : 18,
               fontWeight: 600,
               margin: 0
             }}>
@@ -76,8 +78,8 @@ export function DrawerDetail({ chamado, open, onClose, loading }: DrawerDetailPr
       }
       open={open}
       onClose={onClose}
-      size={520}
-      styles={{ body: { paddingTop: 20, } }}
+      size={isMobile ? '100%' : 520}
+      styles={{ body: { paddingTop: 20, padding: isMobile ? 16 : 24 } }}
     >
       {loading ? (
         <Skeleton active paragraph={{ rows: 10 }} />
@@ -91,8 +93,8 @@ export function DrawerDetail({ chamado, open, onClose, loading }: DrawerDetailPr
 
           <div style={{
             display: 'grid',
-            gridTemplateColumns: '1fr 1fr',
-            gap: 16,
+            gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
+            gap: isMobile ? 12 : 16,
           }}>
             <DetailItem
               icon={<EnvironmentOutlined style={{ fontSize: 16 }} />}

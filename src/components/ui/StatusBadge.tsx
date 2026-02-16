@@ -1,25 +1,19 @@
-import React from 'react';
-import { Badge } from 'antd';
-import { STATUS, StatusType } from '@/types/ticket';
+'use client';
 
-const statusColorMap: Record<string, "success" | "processing" | "default" | "error" | "warning"> = {
-  'Aberto': 'error',       // Vermelho
-  'Em andamento': 'processing', // Azul
-  'Resolvido': 'success',  // Verde 
-  'Cancelado': 'default',  // Cinza 
+import { Tag } from 'antd';
+import type { StatusType } from '@/types';
+
+const STATUS_COLORS: Record<StatusType, string> = {
+  'Aberto': 'orange',
+  'Em andamento': 'blue',
+  'Resolvido': 'green',
+  'Cancelado': 'default',
 };
 
 interface StatusBadgeProps {
   status: StatusType;
 }
 
-export const StatusBadge: React.FC<StatusBadgeProps> = ({ status }) => {
-  const statusKey = STATUS.includes(status) ? status : 'Aberto';
-  
-  return (
-    <Badge 
-      status={statusColorMap[statusKey]} 
-      text={status} 
-    />
-  );
-};
+export function StatusBadge({ status }: StatusBadgeProps) {
+  return <Tag color={STATUS_COLORS[status]}>{status}</Tag>;
+}
