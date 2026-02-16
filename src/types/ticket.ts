@@ -14,7 +14,10 @@ export const STATUS = [
 ] as const;
 export const PRIORIDADES = ["Crítica", "Alta", "Média", "Baixa"] as const;
 
+
 export type StatusType = typeof STATUS[number];
+export type AreaType = typeof AREAS[number];
+export type PrioridadeType = typeof PRIORIDADES[number];
 
 export const ticketSchema = z.object({
   id: z.number().optional(), // ID gerado pelo backend

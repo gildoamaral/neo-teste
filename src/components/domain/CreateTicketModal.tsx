@@ -1,136 +1,189 @@
-import React, { useEffect } from 'react';
-import { Modal, Form, Input, Select, Button, message } from 'antd';
+'use client';
+
+import { Modal, Form, Input, Select, App } from 'antd';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { ticketSchema, AREAS, PRIORIDADES, STATUS } from '@/types/ticket';
-import { useCreateTicket } from '@/hooks/useTickets';
+import { novoChamadoSchema, type NovoChamadoForm } from '@/schemas/chamado';
+import { AREAS, PRIORIDADES } from '@/types';
+import { useCriarChamado } from '@/hooks/useChamados';
 
-// Schema parcial para criação (removemos campos automáticos como ID e Datas)
-// O .omit não remove validações, apenas chaves.
-const createSchema = ticketSchema.omit({ 
-  id: true, 
-  abertura: true, 
-  ultimaAtualizacao: true 
-}).extend({
-  status: z.enum(STATUS)
-});
+const { TextArea } = Input;
 
-type CreateTicketForm = z.infer<typeof createSchema>;
-import { z } from 'zod';
-
-interface CreateTicketModalProps {
-  visible: boolean;
+interface NovoChamadoModalProps {
+  open: boolean;
   onClose: () => void;
 }
 
-export const CreateTicketModal: React.FC<CreateTicketModalProps> = ({ visible, onClose }) => {
-  const { mutate, isPending } = useCreateTicket();
-  
-  const { control, handleSubmit, reset, formState: { errors } } = useForm<CreateTicketForm>({
-    resolver: zodResolver(createSchema),
+export default function NovoChamadoModal({ open, onClose }: NovoChamadoModalProps) {
+  const criarMutation = useCriarChamado();
+  const { message } = App.useApp();
+
+  const {
+    control,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<NovoChamadoForm>({
+    resolver: zodResolver(novoChamadoSchema),
     defaultValues: {
-      status: 'Aberto',
-      prioridade: 'Média',
-    }
+      titulo: '',
+      descricao: '',
+      equipamento: '',
+      instalacao: '',
+      responsavel: null,
+    },
   });
 
-  useEffect(() => {
-    if (visible) reset();
-  }, [visible, reset]);
+  const onSubmit = async (data: NovoChamadoForm) => {
+    try {
+      await criarMutation.mutateAsync({
+        ...data,
+        responsavel: data.responsavel ?? null,
+      });
+      message.success('Chamado criado com sucesso!');
+      reset();
+      onClose();
+    } catch {
+      message.error('Erro ao criar chamado. Tente novamente.');
+    }
+  };
 
-  const onSubmit = (data: CreateTicketForm) => {
-    mutate(data, {
-      onSuccess: () => {
-        message.success('Chamado criado com sucesso!');
-        onClose();
-      },
-      onError: () => {
-        message.error('Erro ao criar chamado.');
-      }
-    });
+  const handleCancel = () => {
+    reset();
+    onClose();
   };
 
   return (
     <Modal
       title="Novo Chamado"
-      open={visible}
-      onCancel={onClose}
-      footer={null}
+      open={open}
+      onOk={handleSubmit(onSubmit)}
+      onCancel={handleCancel}
+      okText="Criar chamado"
+      cancelText="Cancelar"
+      confirmLoading={criarMutation.isPending}
+      width={560}
       destroyOnHidden
     >
-      <Form layout="vertical" onFinish={handleSubmit(onSubmit)}>
-        
-        {/* Título */}
-        <Form.Item label="Título" validateStatus={errors.titulo ? 'error' : ''} help={errors.titulo?.message}>
+      <Form layout="vertical" style={{ marginTop: 16 }}>
+        <Form.Item
+          label="Título"
+          validateStatus={errors.titulo ? 'error' : ''}
+          help={errors.titulo?.message}
+          required
+        >
           <Controller
             name="titulo"
             control={control}
-            render={({ field }) => <Input {...field} placeholder="Ex: Falha no compressor" />}
-          />
-        </Form.Item>
-
-        {/* Equipamento */}
-        <Form.Item label="Equipamento" validateStatus={errors.equipamento ? 'error' : ''} help={errors.equipamento?.message}>
-          <Controller
-            name="equipamento"
-            control={control}
-            render={({ field }) => <Input {...field} placeholder="Ex: Ar Condicionado Central" />}
-          />
-        </Form.Item>
-        
-        {/* Localização */}
-        <Form.Item label="Local da Instalação" validateStatus={errors.instalacao ? 'error' : ''} help={errors.instalacao?.message}>
-          <Controller
-            name="instalacao"
-            control={control}
-            render={({ field }) => <Input {...field} placeholder="Ex: Loja Matriz - SP" />}
+            render={({ field }) => (
+              <Input {...field} placeholder="Descreva o problema brevemente" />
+            )}
           />
         </Form.Item>
 
         <div style={{ display: 'flex', gap: 16 }}>
-          {/* Área */}
-          <Form.Item label="Área" style={{ flex: 1 }} validateStatus={errors.area ? 'error' : ''} help={errors.area?.message}>
+          <Form.Item
+            label="Área"
+            validateStatus={errors.area ? 'error' : ''}
+            help={errors.area?.message}
+            required
+            style={{ flex: 1 }}
+          >
             <Controller
               name="area"
               control={control}
               render={({ field }) => (
-                <Select {...field} placeholder="Selecione">
-                  {AREAS.map(area => <Select.Option key={area} value={area}>{area}</Select.Option>)}
-                </Select>
+                <Select
+                  {...field}
+                  placeholder="Selecione"
+                  options={AREAS.map((a) => ({ label: a, value: a }))}
+                />
               )}
             />
           </Form.Item>
 
-          {/* Prioridade */}
-          <Form.Item label="Prioridade" style={{ flex: 1 }} validateStatus={errors.prioridade ? 'error' : ''} help={errors.prioridade?.message}>
+          <Form.Item
+            label="Prioridade"
+            validateStatus={errors.prioridade ? 'error' : ''}
+            help={errors.prioridade?.message}
+            required
+            style={{ flex: 1 }}
+          >
             <Controller
               name="prioridade"
               control={control}
               render={({ field }) => (
-                <Select {...field} placeholder="Selecione">
-                  {PRIORIDADES.map(p => <Select.Option key={p} value={p}>{p}</Select.Option>)}
-                </Select>
+                <Select
+                  {...field}
+                  placeholder="Selecione"
+                  options={PRIORIDADES.map((p) => ({ label: p, value: p }))}
+                />
               )}
             />
           </Form.Item>
         </div>
 
-        {/* Descrição */}
-        <Form.Item label="Descrição Detalhada" validateStatus={errors.descricao ? 'error' : ''} help={errors.descricao?.message}>
+        <Form.Item
+          label="Equipamento"
+          validateStatus={errors.equipamento ? 'error' : ''}
+          help={errors.equipamento?.message}
+          required
+        >
           <Controller
-            name="descricao"
+            name="equipamento"
             control={control}
-            render={({ field }) => <Input.TextArea {...field} rows={4} />}
+            render={({ field }) => (
+              <Input {...field} placeholder="Ex: Compressor Bitzer 4TCS-8.2" />
+            )}
           />
         </Form.Item>
 
-        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, marginTop: 16 }}>
-          <Button onClick={onClose}>Cancelar</Button>
-          <Button type="primary" htmlType="submit" loading={isPending}>
-            Criar Chamado
-          </Button>
-        </div>
+        <Form.Item
+          label="Instalação"
+          validateStatus={errors.instalacao ? 'error' : ''}
+          help={errors.instalacao?.message}
+          required
+        >
+          <Controller
+            name="instalacao"
+            control={control}
+            render={({ field }) => (
+              <Input {...field} placeholder="Ex: Loja Centro - SP" />
+            )}
+          />
+        </Form.Item>
+
+        <Form.Item
+          label="Descrição"
+          validateStatus={errors.descricao ? 'error' : ''}
+          help={errors.descricao?.message}
+          required
+        >
+          <Controller
+            name="descricao"
+            control={control}
+            render={({ field }) => (
+              <TextArea
+                {...field}
+                rows={4}
+                placeholder="Descreva o problema em detalhes"
+                showCount
+                maxLength={500}
+              />
+            )}
+          />
+        </Form.Item>
+
+        <Form.Item label="Responsável (opcional)">
+          <Controller
+            name="responsavel"
+            control={control}
+            render={({ field }) => (
+              <Input {...field} value={field.value ?? ''} placeholder="Nome do responsável" />
+            )}
+          />
+        </Form.Item>
       </Form>
     </Modal>
   );
-};
+}

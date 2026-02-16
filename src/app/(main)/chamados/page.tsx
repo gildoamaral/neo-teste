@@ -1,103 +1,248 @@
 'use client';
 
-import { useState } from 'react';
-import { Table, Button, Typography, Space, TablePaginationConfig } from 'antd';
-import { useTickets } from '@/hooks/useTickets';
-import { TicketFilters } from '@/components/domain/TicketFilters';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { ReloadOutlined, PlusOutlined } from '@ant-design/icons';
-import { TicketDetailDrawer } from '@/components/domain/TicketDetailDrawer';
-import { CreateTicketModal } from '@/components/domain/CreateTicketModal';
-import { getChamadosColumns } from '@/components/domain/chamadosColumns';
+import { useState, useCallback } from 'react';
+import {
+  Table,
+  Input,
+  Select,
+  Button,
+  Card,
+  Row,
+  Col,
+  Skeleton,
+} from 'antd';
+import {
+  PlusOutlined,
+  SearchOutlined,
+  ClearOutlined,
+} from '@ant-design/icons';
+import type { TablePaginationConfig } from 'antd';
+import type { SorterResult } from 'antd/es/table/interface';
+import dayjs from 'dayjs';
 
-const { Title } = Typography;
+import { useChamados, useChamadoDetalhe } from '@/hooks/useChamados';
+import { StatusBadge, PriorityTag, DrawerDetail, ErrorState, EmptyState } from '@/components/domain';
+import NovoChamadoModal from '@/components/domain/CreateTicketModal';
+import type { ChamadoComTimeline, ChamadoFilters } from '@/types';
+import { STATUS, PRIORIDADES, AREAS } from '@/types';
 
-export default function ChamadosPage() {
-  const [selectedTicketId, setSelectedTicketId] = useState<number | null>(null);
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-
-  const router = useRouter();
-  const searchParams = useSearchParams();
-
-  const page = Number(searchParams.get('page')) || 1;
-  const pageSize = Number(searchParams.get('pageSize')) || 10;
-  const status = searchParams.get('status') || undefined;
-  const prioridade = searchParams.get('prioridade') || undefined;
-  const area = searchParams.get('area') || undefined;
-  const search = searchParams.get('search') || undefined;
-
-  const { data, isLoading, isError, refetch, isFetching } = useTickets({
-    page,
-    pageSize,
-    status,
-    prioridade,
-    area,
-    search,
+export default function ChamadosListView() {
+  const [filters, setFilters] = useState<ChamadoFilters>({
+    pagina: 1,
+    porPagina: 15,
+    ordenarPor: 'abertura',
+    ordemDirecao: 'desc',
   });
 
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [selectedId, setSelectedId] = useState<number | null>(null);
+  const [modalOpen, setModalOpen] = useState(false);
 
-  const handleFilterChange = (key: string, value: string) => {
-    const params = new URLSearchParams(searchParams.toString());
+  const { data, isLoading, isError, refetch } = useChamados(filters);
+  const { data: chamadoDetalhe, isLoading: isLoadingDetalhe } = useChamadoDetalhe(selectedId);
 
-    if (value && value !== 'Todos' && value !== 'Todas') {
-      params.set(key, value);
-    } else {
-      params.delete(key);
-    }
+  const handleRowClick = useCallback((record: ChamadoComTimeline) => {
+    setSelectedId(record.id);
+    setDrawerOpen(true);
+  }, []);
 
-    if (key !== 'page') {
-      params.set('page', '1');
-    }
+  const handleTableChange = useCallback(
+    (
+      pagination: TablePaginationConfig,
+      _filters: Record<string, unknown>,
+      sorter: SorterResult<ChamadoComTimeline> | SorterResult<ChamadoComTimeline>[]
+    ) => {
+      const singleSorter = Array.isArray(sorter) ? sorter[0] : sorter;
+      setFilters((prev) => ({
+        ...prev,
+        pagina: pagination.current ?? 1,
+        porPagina: pagination.pageSize ?? 15,
+        ordenarPor: singleSorter?.field === 'prioridade' ? 'prioridade' : 'abertura',
+        ordemDirecao: singleSorter?.order === 'ascend' ? 'asc' : 'desc',
+      }));
+    },
+    []
+  );
 
-    router.push(`?${params.toString()}`);
-  };
+  const updateFilter = useCallback(
+    (key: keyof ChamadoFilters, value: string | undefined) => {
+      setFilters((prev) => ({ ...prev, [key]: value, pagina: 1 }));
+    },
+    []
+  );
 
-  const handleTableChange = (pagination: TablePaginationConfig) => {
-    const params = new URLSearchParams(searchParams.toString());
-    if (pagination.current) params.set('page', pagination.current.toString());
-    if (pagination.pageSize) params.set('pageSize', pagination.pageSize.toString());
-    router.push(`?${params.toString()}`);
-  };
+  const clearFilters = useCallback(() => {
+    setFilters({
+      pagina: 1,
+      porPagina: 15,
+      ordenarPor: 'abertura',
+      ordemDirecao: 'desc',
+    });
+  }, []);
 
-  const columns = getChamadosColumns(setSelectedTicketId);
+  if (isError) {
+    return <ErrorState onRetry={() => refetch()} />;
+  }
+
+  const columns = [
+    {
+      title: 'ID',
+      dataIndex: 'id',
+      key: 'id',
+      width: 80,
+    },
+    {
+      title: 'Título',
+      dataIndex: 'titulo',
+      key: 'titulo',
+      ellipsis: true,
+    },
+    {
+      title: 'Área',
+      dataIndex: 'area',
+      key: 'area',
+      width: 140,
+    },
+    {
+      title: 'Prioridade',
+      dataIndex: 'prioridade',
+      key: 'prioridade',
+      width: 120,
+      sorter: true,
+      render: (_: unknown, record: ChamadoComTimeline) => (
+        <PriorityTag prioridade={record.prioridade} />
+      ),
+    },
+    {
+      title: 'Status',
+      dataIndex: 'status',
+      key: 'status',
+      width: 140,
+      render: (_: unknown, record: ChamadoComTimeline) => (
+        <StatusBadge status={record.status} />
+      ),
+    },
+    {
+      title: 'Abertura',
+      dataIndex: 'abertura',
+      key: 'abertura',
+      width: 160,
+      sorter: true,
+      defaultSortOrder: 'descend' as const,
+      render: (value: string) => dayjs(value).format('DD/MM/YYYY HH:mm'),
+    },
+    {
+      title: 'Responsável',
+      dataIndex: 'responsavel',
+      key: 'responsavel',
+      width: 150,
+      render: (value: string | null) => value ?? '—',
+    },
+  ];
 
   return (
-    <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
-        <Title level={2} style={{ margin: 0 }}>Gestão de Chamados</Title>
-        <Space>
-          <Button icon={<ReloadOutlined />} onClick={() => refetch()} loading={isFetching}>
-            Atualizar
-          </Button>
-          <Button type="primary" icon={<PlusOutlined />} onClick={() => setIsCreateModalOpen(true)}>
-            Novo Chamado
-          </Button>
-        </Space>
-      </div>
+    <>
+      <Card style={{ marginBottom: 16 }}>
+        <Row gutter={[12, 12]} align="middle">
+          <Col xs={24} sm={12} md={6}>
+            <Input
+              placeholder="Buscar por título..."
+              prefix={<SearchOutlined />}
+              value={filters.busca ?? ''}
+              onChange={(e) => updateFilter('busca', e.target.value || undefined)}
+              allowClear
+            />
+          </Col>
+          <Col xs={24} sm={12} md={4}>
+            <Select
+              placeholder="Status"
+              value={filters.status}
+              onChange={(value) => updateFilter('status', value)}
+              options={STATUS.map((s) => ({ label: s, value: s }))}
+              allowClear
+              style={{ width: '100%' }}
+            />
+          </Col>
+          <Col xs={24} sm={12} md={4}>
+            <Select
+              placeholder="Prioridade"
+              value={filters.prioridade}
+              onChange={(value) => updateFilter('prioridade', value)}
+              options={PRIORIDADES.map((p) => ({ label: p, value: p }))}
+              allowClear
+              style={{ width: '100%' }}
+            />
+          </Col>
+          <Col xs={24} sm={12} md={4}>
+            <Select
+              placeholder="Área"
+              value={filters.area}
+              onChange={(value) => updateFilter('area', value)}
+              options={AREAS.map((a) => ({ label: a, value: a }))}
+              allowClear
+              style={{ width: '100%' }}
+            />
+          </Col>
+          <Col xs={24} sm={12} md={3}>
+            <Button icon={<ClearOutlined />} onClick={clearFilters} block>
+              Limpar
+            </Button>
+          </Col>
+          <Col xs={24} sm={12} md={3}>
+            <Button
+              type="primary"
+              icon={<PlusOutlined />}
+              onClick={() => setModalOpen(true)}
+              block
+            >
+              Novo
+            </Button>
+          </Col>
+        </Row>
+      </Card>
 
-      <TicketFilters
-        filters={{ status, prioridade, area, search }}
-        onFilterChange={handleFilterChange}
-      />
+      {isLoading ? (
+        <Card>
+          <Skeleton active paragraph={{ rows: 12 }} />
+        </Card>
+      ) : data && data.data.length === 0 ? (
+        <Card>
+          <EmptyState description="Nenhum chamado encontrado com os filtros aplicados" />
+        </Card>
+      ) : (
+        <Table
+          dataSource={data?.data}
+          columns={columns}
+          rowKey="id"
+          onChange={handleTableChange}
+          pagination={{
+            current: data?.pagina,
+            pageSize: data?.porPagina,
+            total: data?.total,
+            showSizeChanger: true,
+            pageSizeOptions: ['10', '15', '25', '50'],
+            showTotal: (total, range) => `${range[0]}-${range[1]} de ${total} chamados`,
+          }}
+          onRow={(record) => ({
+            onClick: () => handleRowClick(record),
+            style: { cursor: 'pointer' },
+          })}
+          scroll={{ x: 900 }}
+          size="middle"
+        />
+      )}
 
-      <Table
-        rowKey="id"
-        columns={columns}
-        dataSource={data?.data || []}
-        loading={isLoading}
-        pagination={{
-          current: page,
-          pageSize: pageSize,
-          total: data?.total || 0,
-          showSizeChanger: true,
-          showTotal: (total) => `Total de ${total} chamados`,
+      <DrawerDetail
+        chamado={chamadoDetalhe}
+        open={drawerOpen}
+        onClose={() => {
+          setDrawerOpen(false);
+          setSelectedId(null);
         }}
-        onChange={handleTableChange}
-        scroll={{ x: 800 }}
+        loading={isLoadingDetalhe}
       />
-      
-      <TicketDetailDrawer ticketId={selectedTicketId} onClose={() => setSelectedTicketId(null)} />
-      <CreateTicketModal visible={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)} />
-    </div>
+
+      <NovoChamadoModal open={modalOpen} onClose={() => setModalOpen(false)} />
+    </>
   );
 }

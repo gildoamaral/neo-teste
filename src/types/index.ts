@@ -1,0 +1,62 @@
+export const AREAS = [
+  "Refrigeração",
+  "Energia",
+  "Ar-condicionado",
+  "Água",
+] as const;
+export const STATUS = [
+  "Aberto",
+  "Em andamento",
+  "Resolvido",
+  "Cancelado",
+] as const;
+export const PRIORIDADES = ["Crítica", "Alta", "Média", "Baixa"] as const;
+
+export type StatusType = typeof STATUS[number];
+export type AreasType = typeof AREAS[number];
+export type PrioridadesType = typeof PRIORIDADES[number];
+
+export interface Chamado {
+  id: number;
+  titulo: string;
+  area: AreasType;
+  prioridade: PrioridadesType;
+  status: StatusType;
+  equipamento: string;
+  instalacao: string;
+  abertura: string;
+  ultimaAtualizacao: string;
+  descricao: string;
+  responsavel: string | null;
+}
+
+export interface ChamadoTimeline {
+  data: string;
+  descricao: string;
+  usuario: string;
+}
+
+export interface ChamadoComTimeline extends Chamado {
+  timeline: ChamadoTimeline[];
+}
+
+export interface ChamadoFilters {
+  status?: StatusType;
+  prioridade?: PrioridadesType;
+  area?: AreasType;
+  busca?: string;
+  ordenarPor?: "abertura" | "prioridade";
+  ordemDirecao?: "asc" | "desc";
+  pagina: number;
+  porPagina: number;
+}
+
+export interface ChamadoListResponse {
+  data: ChamadoComTimeline[];
+  total: number;
+  pagina: number;
+  porPagina: number;
+  totalPaginas: number;
+}
+
+export type ViewMode = "tecnico" | "gestor";

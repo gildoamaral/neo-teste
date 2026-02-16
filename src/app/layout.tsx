@@ -1,41 +1,24 @@
-import React from 'react';
-import { AntdRegistry } from '@ant-design/nextjs-registry';
-import { ConfigProvider } from 'antd';
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
+import { AntdRegistry } from '@ant-design/nextjs-registry';
+import Providers from '@/providers/Providers';
 import './globals.css';
-import ReactQueryProvider from '@/lib/ReactQueryProvider';
-
-const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'Neoestech - Gestão de Chamados',
-  description: 'Plataforma de monitoramento operacional',
-};
-
-const theme = {
-  token: {
-    colorPrimary: '#ec6725',
-    borderRadius: 6,
-    fontFamily: inter.style.fontFamily,
-  },
+  title: 'NEO — Plataforma de Monitoramento',
+  description: 'Sistema de gestão de chamados e monitoramento operacional',
 };
 
 export default function RootLayout({
   children,
-}: {
+}: Readonly<{
   children: React.ReactNode;
-}) {
+}>) {
   return (
     <html lang="pt-BR">
-      <body className={inter.className} style={{ margin: 0 }}>
-        <ReactQueryProvider>
-          <AntdRegistry>
-            <ConfigProvider theme={theme}>
-              {children}
-            </ConfigProvider>
-          </AntdRegistry>
-        </ReactQueryProvider>
+      <body style={{ margin: 0 }}>
+        <AntdRegistry>
+          <Providers>{children}</Providers>
+        </AntdRegistry>
       </body>
     </html>
   );
