@@ -12,9 +12,9 @@ export const STATUS = [
 ] as const;
 export const PRIORIDADES = ["Crítica", "Alta", "Média", "Baixa"] as const;
 
-export type StatusType = typeof STATUS[number];
-export type AreasType = typeof AREAS[number];
-export type PrioridadesType = typeof PRIORIDADES[number];
+export type StatusType = (typeof STATUS)[number];
+export type AreasType = (typeof AREAS)[number];
+export type PrioridadesType = (typeof PRIORIDADES)[number];
 
 export interface Chamado {
   id: number;
@@ -59,6 +59,18 @@ export interface ChamadoListResponse {
   totalPaginas: number;
 }
 
+export interface EstatisticasDashboard {
+  stats: {
+    totalChamados: number;
+    chamadosAbertos: number;
+    taxaResolucao: number;
+    tempoMedioResposta: number;
+  };
+  chamadosPorArea: { name: string; value: number }[];
+  chamadosPorPrioridade: { name: string; value: number }[];
+  chamadosPorDia: { date: string; chamados: number }[];
+}
+
 export type ViewMode = "tecnico" | "gestor";
 
 export interface DrawerDetailProps {
@@ -70,7 +82,10 @@ export interface DrawerDetailProps {
 
 export interface FilterBarProps {
   filters: ChamadoFilters;
-  onFilterChange: (key: keyof ChamadoFilters, value: string | undefined) => void;
+  onFilterChange: (
+    key: keyof ChamadoFilters,
+    value: string | undefined,
+  ) => void;
   onClearFilters: () => void;
   onOpenModal: () => void;
 }

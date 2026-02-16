@@ -87,7 +87,7 @@ export function FilterBar({
           </Button>
         </Col>
       </Row>
-      <Row style={{ marginTop: 16 }}>
+      <Row style={{ marginTop: 5 }}>
         <Col>
           <span style={{ fontSize: 12, color: '#888' }}>
             {!filters.status && !filters.prioridade && !filters.area && !filters.busca ? (

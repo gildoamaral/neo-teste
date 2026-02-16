@@ -2,8 +2,10 @@ import type {
   ChamadoComTimeline,
   ChamadoFilters,
   ChamadoListResponse,
+  EstatisticasDashboard,
   PrioridadesType,
 } from "@/types";
+import { AREAS, PRIORIDADES } from "@/types";
 import { gerarTodosChamados, adicionarChamado } from "./gerador";
 import { simularDelay } from "@/utils/simularDelay";
 
@@ -115,39 +117,72 @@ export async function criarChamado(
 }
 
 // axios GET /estatisticas
-export async function fetchEstatisticas() {
+export async function fetchEstatisticas(): Promise<EstatisticasDashboard> {
   await simularDelay();
 
   const chamados = gerarTodosChamados();
 
-  const porStatus: Record<string, number> = {};
-  const porArea: Record<string, number> = {};
-  const porPrioridade: Record<string, number> = {};
+  const totalChamados = chamados.length;
+  const chamadosAbertos = chamados.filter((c) => c.status === "Aberto").length;
+  const resolvidos = chamados.filter((c) => c.status === "Resolvido").length;
+  const cancelados = chamados.filter((c) => c.status === "Cancelado").length;
+  const totalAtivos = totalChamados - cancelados;
+  const taxaResolucao =
+    totalAtivos > 0 ? Math.round((resolvidos / totalAtivos) * 100) : 0;
 
-  let totalAbertosMs = 0;
-  let countAbertos = 0;
+  const chamadosComResposta = chamados.filter(
+    (c) => c.status !== "Aberto" && c.status !== "Cancelado",
+  );
+  const somaHoras = chamadosComResposta.reduce((acc, c) => {
+    const diff =
+      new Date(c.ultimaAtualizacao).getTime() - new Date(c.abertura).getTime();
+    return acc + diff / 3600000;
+  }, 0);
+  const tempoMedioResposta =
+    chamadosComResposta.length > 0
+      ? Math.round(somaHoras / chamadosComResposta.length)
+      : 0;
 
-  const agora = Date.now();
+  const chamadosPorArea = AREAS.map((area) => ({
+    name: area,
+    value: chamados.filter((c) => c.area === area).length,
+  }));
 
-  for (const c of chamados) {
-    porStatus[c.status] = (porStatus[c.status] ?? 0) + 1;
-    porArea[c.area] = (porArea[c.area] ?? 0) + 1;
-    porPrioridade[c.prioridade] = (porPrioridade[c.prioridade] ?? 0) + 1;
+  const chamadosPorPrioridade = PRIORIDADES.map((p) => ({
+    name: p,
+    value: chamados.filter((c) => c.prioridade === p).length,
+  }));
 
-    if (c.status === "Aberto" || c.status === "Em andamento") {
-      totalAbertosMs += agora - new Date(c.abertura).getTime();
-      countAbertos++;
-    }
+  // Agrupa chamados por dia (últimos 45 dias)
+  const hoje = new Date();
+  const inicio = new Date(hoje);
+  inicio.setDate(inicio.getDate() - 45);
+
+  const contagemPorDia: Record<string, number> = {};
+  for (let d = new Date(inicio); d <= hoje; d.setDate(d.getDate() + 1)) {
+    contagemPorDia[d.toISOString().slice(0, 10)] = 0;
   }
 
-  const tempoMedioAbertoHoras =
-    countAbertos > 0 ? Math.round(totalAbertosMs / countAbertos / 3600000) : 0;
+  chamados.forEach((c) => {
+    const dia = c.abertura.slice(0, 10);
+    if (dia in contagemPorDia) {
+      contagemPorDia[dia]++;
+    }
+  });
+
+  const chamadosPorDia = Object.entries(contagemPorDia)
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([date, chamados]) => ({ date, chamados }));
 
   return {
-    total: chamados.length,
-    porStatus,
-    porArea,
-    porPrioridade,
-    tempoMedioAbertoHoras,
+    stats: {
+      totalChamados,
+      chamadosAbertos,
+      taxaResolucao,
+      tempoMedioResposta,
+    },
+    chamadosPorArea,
+    chamadosPorPrioridade,
+    chamadosPorDia,
   };
 }

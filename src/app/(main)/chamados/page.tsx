@@ -72,6 +72,19 @@ export default function ChamadosListView() {
     return <ErrorState onRetry={() => refetch()} />;
   }
 
+  if (isLoading && !data) {
+    return (
+      <>
+      <Card style={{marginBottom: 10}}>
+        <Skeleton active paragraph={{ rows: 1 }} />
+      </Card>
+      <Card>
+        <Skeleton active paragraph={{ rows: 12 }} />
+      </Card>
+      </>
+    );
+  }
+
   const columns = getChamadosColumns();
 
   return (
@@ -83,11 +96,7 @@ export default function ChamadosListView() {
         onOpenModal={() => setModalOpen(true)}
       />
 
-      {isLoading ? (
-        <Card>
-          <Skeleton active paragraph={{ rows: 12 }} />
-        </Card>
-      ) : data && data.data.length === 0 ? (
+      {data && data.data.length === 0 ? (
         <Card>
           <EmptyState description="Nenhum chamado encontrado com os filtros aplicados" />
         </Card>

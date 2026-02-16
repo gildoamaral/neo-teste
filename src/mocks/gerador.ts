@@ -188,9 +188,14 @@ function gerarChamadoFake(id: number): ChamadoComTimeline {
   const prioridade = faker.helpers.arrayElement([...PRIORIDADES]);
   const equipamentos = EQUIPAMENTOS_POR_AREA[area];
   const titulos = TITULOS_POR_AREA[area];
+
+  const hoje = new Date();
+  const inicio = new Date(hoje);
+  inicio.setDate(inicio.getDate() - 45);
+
   const abertura = faker.date.between({
-    from: "2026-01-01T00:00:00Z",
-    to: "2026-02-14T23:59:59Z",
+    from: inicio,
+    to: hoje,
   });
 
   const ultimaAtualizacao = new Date(
