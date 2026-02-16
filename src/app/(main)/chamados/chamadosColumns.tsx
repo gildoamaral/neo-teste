@@ -53,11 +53,11 @@ export const getChamadosColumns = (): ColumnsType<ChamadoComTimeline> => [
     defaultSortOrder: 'descend' as const,
     render: (value: string) => dayjs(value).format('DD/MM/YYYY HH:mm'),
   },
-  // {
-  //   title: 'Responsável',
-  //   dataIndex: 'responsavel',
-  //   key: 'responsavel',
-  //   width: 150,
-  //   render: (value: string | null) => value ?? '—',
-  // },
+  {
+    title: 'Responsável',
+    dataIndex: 'responsavel',
+    key: 'responsavel',
+    width: 150,
+    render: (value: string | null) => value ?? '—',
+  },
 ];
