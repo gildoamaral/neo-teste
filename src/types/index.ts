@@ -89,3 +89,11 @@ export interface FilterBarProps {
   onClearFilters: () => void;
   onOpenModal: () => void;
 }
+
+export interface SiderProps {
+  collapsed: boolean;
+  setCollapsed: (collapsed: boolean) => void;
+  isMobile: boolean;
+  drawerOpen: boolean;
+  setDrawerOpen: (open: boolean) => void;
+}

@@ -1,14 +1,8 @@
+import { SiderProps } from '@/types';
 import { BellOutlined, CustomerServiceOutlined, LeftOutlined, RightOutlined } from '@ant-design/icons'
 import { Avatar, Button, Drawer, Layout, Menu, Space, Typography } from 'antd'
 import { usePathname, useRouter } from 'next/navigation'
-
-interface SiderProps {
-  collapsed: boolean;
-  setCollapsed: (collapsed: boolean) => void;
-  isMobile: boolean;
-  drawerOpen: boolean;
-  setDrawerOpen: (open: boolean) => void;
-}
+import Logo from '../ui/Logo';
 
 export const Sider = ({ collapsed, setCollapsed, isMobile, drawerOpen, setDrawerOpen }: SiderProps) => {
   const router = useRouter();
@@ -29,7 +23,6 @@ export const Sider = ({ collapsed, setCollapsed, isMobile, drawerOpen, setDrawer
 
   const siderContent = (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-      {/* Logo Area */}
       <div style={{
         padding: collapsed && !isMobile ? '20px 12px' : '20px 24px',
         display: 'flex',
@@ -41,23 +34,7 @@ export const Sider = ({ collapsed, setCollapsed, isMobile, drawerOpen, setDrawer
       }}>
         {(!collapsed || isMobile) ? (
           <>
-            <Space align="center" size={12}>
-              <div style={{
-                width: 40,
-                height: 40,
-                background: '#ec6725',
-                borderRadius: 8,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontWeight: 'bold',
-                fontSize: 20,
-                color: '#fff'
-              }}>
-                N
-              </div>
-              <span style={{ color: '#fff', fontSize: 18, fontWeight: 'bold' }}>NEO</span>
-            </Space>
+            <Logo/>
             {!isMobile && (
               <Button
                 type="text"
@@ -77,7 +54,6 @@ export const Sider = ({ collapsed, setCollapsed, isMobile, drawerOpen, setDrawer
         )}
       </div>
 
-      {/* Scrollable middle section */}
       <div style={{ flex: 1, overflow: 'auto' }}>
         {(!collapsed || isMobile) &&
           <div className='flex justify-center items-center mt-5'>
@@ -92,7 +68,6 @@ export const Sider = ({ collapsed, setCollapsed, isMobile, drawerOpen, setDrawer
           </div>
         }
 
-        {/* Menu */}
         <Menu
           mode="inline"
           selectedKeys={[selectedKey]}
@@ -130,7 +105,6 @@ export const Sider = ({ collapsed, setCollapsed, isMobile, drawerOpen, setDrawer
         />
       </div>
 
-      {/* User Profile Footer — always pinned to bottom */}
       <div style={{
         padding: collapsed && !isMobile ? '20px 12px' : '20px 24px',
         borderTop: '1px solid rgba(255,255,255,0.1)',
@@ -161,7 +135,6 @@ export const Sider = ({ collapsed, setCollapsed, isMobile, drawerOpen, setDrawer
     </div>
   );
 
-  // Mobile: render as Drawer
   if (isMobile) {
     return (
       <Drawer
@@ -176,7 +149,6 @@ export const Sider = ({ collapsed, setCollapsed, isMobile, drawerOpen, setDrawer
     );
   }
 
-  // Desktop: render as Sider
   return (
     <Layout.Sider
       trigger={null}
