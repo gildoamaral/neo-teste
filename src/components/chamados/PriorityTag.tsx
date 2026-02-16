@@ -4,10 +4,10 @@ import { Tag } from 'antd';
 import type { PrioridadesType } from '@/types';
 
 const PRIORIDADE_COLORS: Record<PrioridadesType, string> = {
-  'Crítica': '#cf1322',
+  'Crítica': '#DC2828',
   'Alta': '#d46b08',
-  'Média': '#d4b106',
-  'Baixa': '#389e0d',
+  'Média': '#E7B008',
+  'Baixa': '#8F96A3',
 };
 
 interface PriorityTagProps {
@@ -18,7 +18,7 @@ export function PriorityTag({ prioridade }: PriorityTagProps) {
   return (
     <Tag
       color={PRIORIDADE_COLORS[prioridade]}
-      style={{ fontWeight: prioridade === 'Crítica' ? 200 : 100 }}
+      style={{ fontWeight: prioridade === 'Crítica' ? 200 : 100, borderRadius: 15, padding: '0 8px', fontSize: 12 }}
     >
       {prioridade === 'Crítica' ? '⚠ ' : ''}
       {prioridade}

@@ -6,28 +6,28 @@ import type { ChamadoComTimeline } from '@/types';
 
 export const getChamadosColumns = (): ColumnsType<ChamadoComTimeline> => [
   {
-    title: 'ID',
+    title: <span style={{ fontSize: 12, color: 'var(--text-foreground)' }}>ID</span>,
     dataIndex: 'id',
     key: 'id',
     width: 80,
     render: (value: number) =>
-      <span style={{ color: '#ec6725', fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace' }}>#{value}</span>,
+      <span style={{ color: 'var(--primary-color)', fontFamily: 'var(--font-details)' }}>#{value}</span>,
   },
   {
-    title: 'Título',
+    title: <span style={{ fontSize: 12, color: 'var(--text-foreground)' }}>TÍTULO</span>,
     dataIndex: 'titulo',
     key: 'titulo',
     ellipsis: true,
   },
   {
-    title: 'Área',
+    title: <span style={{ fontSize: 12, color: 'var(--text-foreground)' }}>ÁREA</span>,
     dataIndex: 'area',
     key: 'area',
     width: 140,
     render: (value: string) => <span className='text-gray-500'>{value}</span>,
   },
   {
-    title: 'Prioridade',
+    title: <span style={{ fontSize: 12, color: 'var(--text-foreground)' }}>PRIORIDADE</span>,
     dataIndex: 'prioridade',
     key: 'prioridade',
     width: 120,
@@ -37,7 +37,7 @@ export const getChamadosColumns = (): ColumnsType<ChamadoComTimeline> => [
     ),
   },
   {
-    title: 'Status',
+    title: <span style={{ fontSize: 12, color: 'var(--text-foreground)' }}>STATUS</span>,
     dataIndex: 'status',
     key: 'status',
     width: 140,
@@ -45,21 +45,21 @@ export const getChamadosColumns = (): ColumnsType<ChamadoComTimeline> => [
       <StatusBadge status={record.status} />
     ),
   },
-  {
-    title: 'Abertura',
-    dataIndex: 'abertura',
-    key: 'abertura',
-    width: 160,
-    sorter: true,
-    defaultSortOrder: 'descend' as const,
-    render: (value: string) =>
-      <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace' }} className='text-gray-500'>{dayjs(value).format('DD/MM/YYYY HH:mm')}</span>,
-  },
-  {
-    title: 'Responsável',
+    {
+    title: <span style={{ fontSize: 12, color: 'var(--text-foreground)' }}>RESPONSÁVEL</span>,
     dataIndex: 'responsavel',
     key: 'responsavel',
     width: 150,
-    render: (value: string | null) => value ?? '—',
+    render: (value: string | null) => <span style={{ color: 'var(--text-foreground)' }}>{value ?? '—'}</span>,
+  },
+  {
+    title: <span style={{ fontSize: 12, color: 'var(--text-foreground)' }}>ABERTURA</span>,
+    dataIndex: 'abertura',
+    key: 'abertura',
+    width: 120,
+    sorter: true,
+    defaultSortOrder: 'descend' as const,
+    render: (value: string) =>
+      <span style={{ fontFamily: 'var(--font-details)', color: 'var(--text-foreground)' }}>{dayjs(value).format('DD/MM/YYYY')}</span>,
   },
 ];
