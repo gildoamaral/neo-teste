@@ -133,7 +133,8 @@ function gerarTimeline(status: StatusType, abertura: Date): ChamadoTimeline[] {
 
   if (status === "Aberto") return timeline;
 
-  const horasDepois = faker.number.int({ min: 1, max: 8 });
+  // Intervalo de 0.5 a 2 dias para atribuição
+  const horasDepois = faker.number.int({ min: 12, max: 48 });
   const dataAtribuicao = new Date(abertura.getTime() + horasDepois * 3600000);
   const responsavel = faker.helpers.arrayElement(
     RESPONSAVEIS.filter((r): r is string => r !== null),
@@ -146,7 +147,8 @@ function gerarTimeline(status: StatusType, abertura: Date): ChamadoTimeline[] {
   });
 
   if (status === "Em andamento") {
-    const horasInicio = faker.number.int({ min: 1, max: 4 });
+    // Intervalo de 4 horas a 2 dias para início do atendimento
+    const horasInicio = faker.number.int({ min: 4, max: 48 });
     timeline.push({
       data: new Date(
         dataAtribuicao.getTime() + horasInicio * 3600000,
@@ -158,13 +160,23 @@ function gerarTimeline(status: StatusType, abertura: Date): ChamadoTimeline[] {
   }
 
   if (status === "Resolvido") {
+    // Intervalo de 6 horas a 1.5 dias para início
+    const horasInicio = faker.number.int({ min: 6, max: 36 });
     timeline.push({
-      data: new Date(dataAtribuicao.getTime() + 2 * 3600000).toISOString(),
+      data: new Date(
+        dataAtribuicao.getTime() + horasInicio * 3600000,
+      ).toISOString(),
       descricao: "Técnico iniciou atendimento.",
       usuario: responsavel,
     });
+    // Intervalo de 8 horas a 2 dias para resolução
+    const horasResolucao = faker.number.int({ min: 8, max: 48 });
     timeline.push({
-      data: new Date(dataAtribuicao.getTime() + 6 * 3600000).toISOString(),
+      data: new Date(
+        dataAtribuicao.getTime() +
+          horasInicio * 3600000 +
+          horasResolucao * 3600000,
+      ).toISOString(),
       descricao: "Problema corrigido e testado. Chamado encerrado.",
       usuario: responsavel,
     });
@@ -172,8 +184,12 @@ function gerarTimeline(status: StatusType, abertura: Date): ChamadoTimeline[] {
   }
 
   if (status === "Cancelado") {
+    // Intervalo de 2 horas a 1 dia para cancelamento
+    const horasCancelamento = faker.number.int({ min: 2, max: 24 });
     timeline.push({
-      data: new Date(dataAtribuicao.getTime() + 1 * 3600000).toISOString(),
+      data: new Date(
+        dataAtribuicao.getTime() + horasCancelamento * 3600000,
+      ).toISOString(),
       descricao: "Chamado cancelado — problema resolvido antes do atendimento.",
       usuario: "Coordenação",
     });
@@ -198,9 +214,10 @@ function gerarChamadoFake(id: number): ChamadoComTimeline {
     to: hoje,
   });
 
-  const ultimaAtualizacao = new Date(
-    abertura.getTime() + faker.number.int({ min: 0, max: 72 }) * 3600000,
-  );
+  const timeline = gerarTimeline(status, abertura);
+
+  // A última atualização deve ser a data do último evento da timeline
+  const ultimaAtualizacao = timeline[timeline.length - 1].data;
 
   const responsavelEscolhido =
     status === "Aberto"
@@ -218,10 +235,10 @@ function gerarChamadoFake(id: number): ChamadoComTimeline {
     equipamento: faker.helpers.arrayElement(equipamentos),
     instalacao: faker.helpers.arrayElement(INSTALACOES),
     abertura: abertura.toISOString(),
-    ultimaAtualizacao: ultimaAtualizacao.toISOString(),
+    ultimaAtualizacao: ultimaAtualizacao,
     descricao: faker.lorem.sentences({ min: 1, max: 3 }),
     responsavel: responsavelEscolhido,
-    timeline: gerarTimeline(status, abertura),
+    timeline: timeline,
   };
 }
 
@@ -230,9 +247,12 @@ function converterSeedParaChamadoComTimeline(
 ): ChamadoComTimeline {
   const chamado = seed as ChamadoComTimeline;
   const abertura = new Date(chamado.abertura);
+  const timeline = gerarTimeline(chamado.status, abertura);
+
   return {
     ...chamado,
-    timeline: gerarTimeline(chamado.status, abertura),
+    ultimaAtualizacao: timeline[timeline.length - 1].data,
+    timeline: timeline,
   };
 }
 
