@@ -158,7 +158,7 @@ export function DrawerDetail({ chamado, open, onClose, loading }: DrawerDetailPr
             </h3>
             <Timeline
               items={[...chamado.timeline].reverse().map((item, index) => ({
-                dot: index === 0 ? (
+                icon: index === 0 ? (
                   <div style={{
                     width: 10,
                     height: 10,
@@ -167,7 +167,7 @@ export function DrawerDetail({ chamado, open, onClose, loading }: DrawerDetailPr
                     border: '2px solid var(--primary-color)'
                   }} />
                 ) : undefined,
-                children: (
+                content: (
                   <div style={{ paddingBottom: 8 }}>
                     <p style={{
                       fontSize: 11,

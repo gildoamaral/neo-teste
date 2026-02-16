@@ -73,6 +73,7 @@ export const Sider = ({ collapsed, setCollapsed }: SiderProps) => {
           />
         )}
       </div>
+      
       {!collapsed &&
         <div className='flex justify-center items-center mt-5'>
           <Typography.Title level={5} style={{
@@ -124,16 +125,6 @@ export const Sider = ({ collapsed, setCollapsed }: SiderProps) => {
               borderLeft: selectedKey === 'dashboard' ? '3px solid #ec6725' : 'none'
             }
           },
-          // {
-          //   key: 'configuracoes',
-          //   icon: <SettingOutlined style={{ fontSize: 18 }} />,
-          //   label: <span style={{ fontSize: 15 }}>Configurações</span>,
-          //   style: { 
-          //     height: 48,
-          //     background: selectedKey === 'configuracoes' ? 'rgba(236, 103, 37, 0.1)' : 'transparent',
-          //     borderLeft: selectedKey === 'configuracoes' ? '3px solid #ec6725' : 'none'
-          //   }
-          // },
         ]}
       />
 
