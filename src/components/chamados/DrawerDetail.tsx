@@ -1,6 +1,6 @@
 'use client';
 
-import { Drawer, Descriptions, Timeline, Typography, Tag, Divider, Skeleton } from 'antd';
+import { Drawer, Timeline, Typography, Skeleton, Space } from 'antd';
 import {
   ClockCircleOutlined,
   EnvironmentOutlined,
@@ -8,90 +8,196 @@ import {
   UserOutlined,
 } from '@ant-design/icons';
 import dayjs from 'dayjs';
-import {StatusBadge} from './StatusBadge';
-import {PriorityTag} from './PriorityTag';
+import { StatusBadge } from './StatusBadge';
+import { PriorityTag } from './PriorityTag';
 import type { DrawerDetailProps } from '@/types';
 
-const { Text, Paragraph, Title } = Typography;
+const { Text, Paragraph } = Typography;
+
+interface DetailItemProps {
+  icon: React.ReactNode;
+  label: string;
+  value: string;
+}
+
+const DetailItem = ({ icon, label, value }: DetailItemProps) => (
+  <div style={{ display: 'flex', alignItems: 'start', gap: 10 }}>
+    <div style={{ color: 'var(--text-foreground)', marginTop: 2 }}>
+      {icon}
+    </div>
+    <div>
+      <p style={{
+        fontSize: 11,
+        color: 'var(--text-foreground)',
+        fontWeight: 500,
+        textTransform: 'uppercase',
+        letterSpacing: '0.5px',
+        margin: 0,
+        marginBottom: 4
+      }}>
+        {label}
+      </p>
+      <p style={{
+        fontSize: 14,
+        fontWeight: 500,
+        margin: 0
+      }}>
+        {value}
+      </p>
+    </div>
+  </div>
+);
 
 export function DrawerDetail({ chamado, open, onClose, loading }: DrawerDetailProps) {
   return (
     <Drawer
-      title={chamado ? `Chamado #${chamado.id}` : 'Detalhes do chamado'}
+      title={
+        chamado ? (
+          <div>
+            <p style={{
+              fontSize: 12,
+              fontWeight: 500,
+              margin: 0,
+              marginBottom: 4,
+              fontFamily: 'var(--font-primary)',
+              color: 'var(--text-foreground)'
+            }}>
+              #{chamado.id}
+            </p>
+            <h2 style={{
+              fontSize: 18,
+              fontWeight: 600,
+              margin: 0
+            }}>
+              {chamado.titulo}
+            </h2>
+          </div>
+        ) : 'Detalhes do chamado'
+      }
       open={open}
       onClose={onClose}
       size={520}
-      styles={{ body: { paddingTop: 16 } }}
+      styles={{ body: { paddingTop: 20, } }}
     >
       {loading ? (
         <Skeleton active paragraph={{ rows: 10 }} />
       ) : chamado ? (
-        <>
-          <Title level={5} style={{ marginTop: 0 }}>
-            {chamado.titulo}
-          </Title>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
 
-          <Descriptions column={1} size="small" bordered>
-            <Descriptions.Item label="Status">
-              <StatusBadge status={chamado.status} />
-            </Descriptions.Item>
-            <Descriptions.Item label="Prioridade">
-              <PriorityTag prioridade={chamado.prioridade} />
-            </Descriptions.Item>
-            <Descriptions.Item label="Área">
-              <Tag>{chamado.area}</Tag>
-            </Descriptions.Item>
-            <Descriptions.Item label="Equipamento">
-              <Text>
-                <ToolOutlined style={{ marginRight: 6 }} />
-                {chamado.equipamento}
-              </Text>
-            </Descriptions.Item>
-            <Descriptions.Item label="Instalação">
-              <Text>
-                <EnvironmentOutlined style={{ marginRight: 6 }} />
-                {chamado.instalacao}
-              </Text>
-            </Descriptions.Item>
-            <Descriptions.Item label="Responsável">
-              <Text>
-                <UserOutlined style={{ marginRight: 6 }} />
-                {chamado.responsavel ?? 'Não atribuído'}
-              </Text>
-            </Descriptions.Item>
-            <Descriptions.Item label="Abertura">
-              <Text>
-                <ClockCircleOutlined style={{ marginRight: 6 }} />
-                {dayjs(chamado.abertura).format('DD/MM/YYYY HH:mm')}
-              </Text>
-            </Descriptions.Item>
-            <Descriptions.Item label="Última atualização">
-              <Text>
-                {dayjs(chamado.ultimaAtualizacao).format('DD/MM/YYYY HH:mm')}
-              </Text>
-            </Descriptions.Item>
-          </Descriptions>
+          <Space size={8}>
+            <StatusBadge status={chamado.status} />
+            <PriorityTag prioridade={chamado.prioridade} />
+          </Space>
 
-          <Divider titlePlacement={'left'}>Descrição</Divider>
-          <Paragraph>{chamado.descricao}</Paragraph>
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: '1fr 1fr',
+            gap: 16,
+          }}>
+            <DetailItem
+              icon={<EnvironmentOutlined style={{ fontSize: 16 }} />}
+              label="Área"
+              value={chamado.area}
+            />
+            <DetailItem
+              icon={<ToolOutlined style={{ fontSize: 16 }} />}
+              label="Equipamento"
+              value={chamado.equipamento}
+            />
+            <DetailItem
+              icon={<UserOutlined style={{ fontSize: 16 }} />}
+              label="Responsável"
+              value={chamado.responsavel ?? 'Não atribuído'}
+            />
+            <DetailItem
+              icon={<ClockCircleOutlined style={{ fontSize: 16 }} />}
+              label="Abertura"
+              value={dayjs(chamado.abertura).format('DD/MM/YYYY HH:mm')}
+            />
+            <DetailItem
+              icon={<EnvironmentOutlined style={{ fontSize: 16 }} />}
+              label="Instalação"
+              value={chamado.instalacao}
+            />
+            <DetailItem
+              icon={<ClockCircleOutlined style={{ fontSize: 16 }} />}
+              label="Última Atualização"
+              value={dayjs(chamado.ultimaAtualizacao).format('DD/MM/YYYY HH:mm')}
+            />
+          </div>
 
-          <Divider titlePlacement={'left'}>Timeline</Divider>
-          <Timeline
-            items={chamado.timeline.map((item) => ({
-              content: (
-                <div>
-                  <Text strong>{item.usuario}</Text>
-                  <br />
-                  <Text>{item.descricao}</Text>
-                  <br />
-                  <Text type="secondary" style={{ fontSize: 12 }}>
-                    {dayjs(item.data).format('DD/MM/YYYY HH:mm')}
-                  </Text>
-                </div>
-              ),
-            }))}
-          />
-        </>
+          {/* Description */}
+          <div>
+            <h3 style={{
+              fontSize: 14,
+              fontWeight: 600,
+              margin: 0,
+              marginBottom: 8
+            }}>
+              Descrição
+            </h3>
+            <Paragraph style={{
+              fontSize: 14,
+              color: 'var(--text-foreground)',
+              lineHeight: 1.6,
+              margin: 0
+            }}>
+              {chamado.descricao}
+            </Paragraph>
+          </div>
+
+          {/* Timeline */}
+          <div>
+            <h3 style={{
+              fontSize: 14,
+              fontWeight: 600,
+              margin: 0,
+              marginBottom: 16
+            }}>
+              Timeline de Eventos
+            </h3>
+            <Timeline
+              items={[...chamado.timeline].reverse().map((item, index) => ({
+                dot: index === 0 ? (
+                  <div style={{
+                    width: 10,
+                    height: 10,
+                    borderRadius: '50%',
+                    backgroundColor: 'var(--primary-color)',
+                    border: '2px solid var(--primary-color)'
+                  }} />
+                ) : undefined,
+                children: (
+                  <div style={{ paddingBottom: 8 }}>
+                    <p style={{
+                      fontSize: 11,
+                      color: 'var(--text-foreground)',
+                      fontWeight: 500,
+                      margin: 0,
+                      marginBottom: 4
+                    }}>
+                      {dayjs(item.data).format('YYYY-MM-DD HH:mm')}
+                    </p>
+                    <p style={{
+                      fontSize: 14,
+                      margin: 0,
+                      marginBottom: 4
+                    }}>
+                      {item.descricao}
+                    </p>
+                    <p style={{
+                      fontSize: 12,
+                      color: 'var(--text-foreground)',
+                      margin: 0
+                    }}>
+                      {item.usuario}
+                    </p>
+                  </div>
+                ),
+              }))}
+            />
+          </div>
+        </div>
       ) : (
         <Text type="secondary">Nenhum chamado selecionado.</Text>
       )}
