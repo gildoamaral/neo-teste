@@ -1,6 +1,6 @@
 'use client';
 
-import { Drawer, Descriptions, Timeline, Typography, Tag, Divider, Skeleton, type GetProps } from 'antd';
+import { Drawer, Descriptions, Timeline, Typography, Tag, Divider, Skeleton } from 'antd';
 import {
   ClockCircleOutlined,
   EnvironmentOutlined,
@@ -10,17 +10,9 @@ import {
 import dayjs from 'dayjs';
 import {StatusBadge} from './StatusBadge';
 import {PriorityTag} from './PriorityTag';
-import type { ChamadoComTimeline } from '@/types';
+import type { DrawerDetailProps } from '@/types';
 
-const { Text, Paragraph } = Typography;
-type DividerProps = GetProps<typeof Divider>;
-
-interface DrawerDetailProps {
-  chamado: ChamadoComTimeline | null | undefined;
-  open: boolean;
-  onClose: () => void;
-  loading?: boolean;
-}
+const { Text, Paragraph, Title } = Typography;
 
 export function DrawerDetail({ chamado, open, onClose, loading }: DrawerDetailProps) {
   return (
@@ -35,9 +27,9 @@ export function DrawerDetail({ chamado, open, onClose, loading }: DrawerDetailPr
         <Skeleton active paragraph={{ rows: 10 }} />
       ) : chamado ? (
         <>
-          <Typography.Title level={5} style={{ marginTop: 0 }}>
+          <Title level={5} style={{ marginTop: 0 }}>
             {chamado.titulo}
-          </Typography.Title>
+          </Title>
 
           <Descriptions column={1} size="small" bordered>
             <Descriptions.Item label="Status">
@@ -80,10 +72,10 @@ export function DrawerDetail({ chamado, open, onClose, loading }: DrawerDetailPr
             </Descriptions.Item>
           </Descriptions>
 
-          <Divider titlePlacement={'left' as DividerProps['titlePlacement']}>Descrição</Divider>
+          <Divider titlePlacement={'left'}>Descrição</Divider>
           <Paragraph>{chamado.descricao}</Paragraph>
 
-          <Divider titlePlacement={'left' as DividerProps['titlePlacement']}>Timeline</Divider>
+          <Divider titlePlacement={'left'}>Timeline</Divider>
           <Timeline
             items={chamado.timeline.map((item) => ({
               content: (

@@ -1,7 +1,7 @@
 import dayjs from 'dayjs';
 import type { ColumnsType } from 'antd/es/table';
-import { PriorityTag } from '@/components/domain/PriorityTag';
-import { StatusBadge } from '@/components/domain/StatusBadge';
+import { PriorityTag } from '@/components/chamados/PriorityTag';
+import { StatusBadge } from '@/components/chamados/StatusBadge';
 import type { ChamadoComTimeline } from '@/types';
 
 export const getChamadosColumns = (): ColumnsType<ChamadoComTimeline> => [

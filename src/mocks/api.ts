@@ -37,17 +37,18 @@ export async function fetchChamados(
       (c) =>
         c.titulo.toLowerCase().includes(busca) ||
         c.equipamento.toLowerCase().includes(busca) ||
-        c.instalacao.toLowerCase().includes(busca),
+        c.instalacao.toLowerCase().includes(busca) ||
+        c.id.toString().includes(busca),
     );
   }
 
   // Ordenação
   if (filters.ordenarPor === "abertura") {
-chamados.sort((a, b) => {
-  const timeA = new Date(a.abertura).getTime();
-  const timeB = new Date(b.abertura).getTime();
-  return filters.ordemDirecao === "desc" ? timeB - timeA : timeA - timeB;
-});
+    chamados.sort((a, b) => {
+      const timeA = new Date(a.abertura).getTime();
+      const timeB = new Date(b.abertura).getTime();
+      return filters.ordemDirecao === "desc" ? timeB - timeA : timeA - timeB;
+    });
   } else if (filters.ordenarPor === "prioridade") {
     chamados.sort((a, b) => {
       const diff =

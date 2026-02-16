@@ -60,3 +60,17 @@ export interface ChamadoListResponse {
 }
 
 export type ViewMode = "tecnico" | "gestor";
+
+export interface DrawerDetailProps {
+  chamado: ChamadoComTimeline | null | undefined;
+  open: boolean;
+  onClose: () => void;
+  loading?: boolean;
+}
+
+export interface FilterBarProps {
+  filters: ChamadoFilters;
+  onFilterChange: (key: keyof ChamadoFilters, value: string | undefined) => void;
+  onClearFilters: () => void;
+  onOpenModal: () => void;
+}

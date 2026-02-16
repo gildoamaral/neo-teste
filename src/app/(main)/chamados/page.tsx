@@ -3,27 +3,16 @@
 import { useState, useCallback } from 'react';
 import {
   Table,
-  Input,
-  Select,
-  Button,
   Card,
-  Row,
-  Col,
   Skeleton,
 } from 'antd';
-import {
-  PlusOutlined,
-  SearchOutlined,
-  ClearOutlined,
-} from '@ant-design/icons';
 import type { TablePaginationConfig } from 'antd';
 import type { SorterResult } from 'antd/es/table/interface';
 import { useChamados, useChamadoDetalhe } from '@/hooks/useChamados';
-import { DrawerDetail, ErrorState, EmptyState } from '@/components/domain';
+import { DrawerDetail, ErrorState, EmptyState, FilterBar } from '@/components/chamados';
 import { getChamadosColumns } from './chamadosColumns';
-import NovoChamadoModal from '@/components/domain/CreateTicketModal';
+import NovoChamadoModal from '@/components/chamados/CreateTicketModal';
 import type { ChamadoComTimeline, ChamadoFilters } from '@/types';
-import { STATUS, PRIORIDADES, AREAS } from '@/types';
 
 export default function ChamadosListView() {
   const [filters, setFilters] = useState<ChamadoFilters>({
@@ -87,64 +76,12 @@ export default function ChamadosListView() {
 
   return (
     <>
-      <Card style={{ marginBottom: 16 }}>
-        <Row gutter={[12, 12]} align="middle">
-          <Col xs={24} sm={12} md={6}>
-            <Input
-              placeholder="Buscar por título..."
-              prefix={<SearchOutlined />}
-              value={filters.busca ?? ''}
-              onChange={(e) => updateFilter('busca', e.target.value || undefined)}
-              allowClear
-            />
-          </Col>
-          <Col xs={24} sm={12} md={4}>
-            <Select
-              placeholder="Status"
-              value={filters.status}
-              onChange={(value) => updateFilter('status', value)}
-              options={STATUS.map((s) => ({ label: s, value: s }))}
-              allowClear
-              style={{ width: '100%' }}
-            />
-          </Col>
-          <Col xs={24} sm={12} md={4}>
-            <Select
-              placeholder="Prioridade"
-              value={filters.prioridade}
-              onChange={(value) => updateFilter('prioridade', value)}
-              options={PRIORIDADES.map((p) => ({ label: p, value: p }))}
-              allowClear
-              style={{ width: '100%' }}
-            />
-          </Col>
-          <Col xs={24} sm={12} md={4}>
-            <Select
-              placeholder="Área"
-              value={filters.area}
-              onChange={(value) => updateFilter('area', value)}
-              options={AREAS.map((a) => ({ label: a, value: a }))}
-              allowClear
-              style={{ width: '100%' }}
-            />
-          </Col>
-          <Col xs={24} sm={12} md={3}>
-            <Button icon={<ClearOutlined />} onClick={clearFilters} block>
-              Limpar
-            </Button>
-          </Col>
-          <Col xs={24} sm={12} md={3}>
-            <Button
-              type="primary"
-              icon={<PlusOutlined />}
-              onClick={() => setModalOpen(true)}
-              block
-            >
-              Novo
-            </Button>
-          </Col>
-        </Row>
-      </Card>
+      <FilterBar
+        filters={filters}
+        onFilterChange={updateFilter}
+        onClearFilters={clearFilters}
+        onOpenModal={() => setModalOpen(true)}
+      />
 
       {isLoading ? (
         <Card>
