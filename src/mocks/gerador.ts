@@ -242,7 +242,7 @@ export function gerarTodosChamados(): ChamadoComTimeline[] {
 
   const gerados: ChamadoComTimeline[] = [];
   for (let i = 0; i < 1000; i++) {
-    gerados.push(gerarChamadoFake(2000 + i));
+    gerados.push(gerarChamadoFake(1013 + i));
   }
 
   chamadosCache = [...seedChamados, ...gerados];

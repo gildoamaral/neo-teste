@@ -18,10 +18,9 @@ import {
 } from '@ant-design/icons';
 import type { TablePaginationConfig } from 'antd';
 import type { SorterResult } from 'antd/es/table/interface';
-import dayjs from 'dayjs';
-
 import { useChamados, useChamadoDetalhe } from '@/hooks/useChamados';
-import { StatusBadge, PriorityTag, DrawerDetail, ErrorState, EmptyState } from '@/components/domain';
+import { DrawerDetail, ErrorState, EmptyState } from '@/components/domain';
+import { getChamadosColumns } from './chamadosColumns';
 import NovoChamadoModal from '@/components/domain/CreateTicketModal';
 import type { ChamadoComTimeline, ChamadoFilters } from '@/types';
 import { STATUS, PRIORIDADES, AREAS } from '@/types';
@@ -84,61 +83,7 @@ export default function ChamadosListView() {
     return <ErrorState onRetry={() => refetch()} />;
   }
 
-  const columns = [
-    {
-      title: 'ID',
-      dataIndex: 'id',
-      key: 'id',
-      width: 80,
-    },
-    {
-      title: 'Título',
-      dataIndex: 'titulo',
-      key: 'titulo',
-      ellipsis: true,
-    },
-    {
-      title: 'Área',
-      dataIndex: 'area',
-      key: 'area',
-      width: 140,
-    },
-    {
-      title: 'Prioridade',
-      dataIndex: 'prioridade',
-      key: 'prioridade',
-      width: 120,
-      sorter: true,
-      render: (_: unknown, record: ChamadoComTimeline) => (
-        <PriorityTag prioridade={record.prioridade} />
-      ),
-    },
-    {
-      title: 'Status',
-      dataIndex: 'status',
-      key: 'status',
-      width: 140,
-      render: (_: unknown, record: ChamadoComTimeline) => (
-        <StatusBadge status={record.status} />
-      ),
-    },
-    {
-      title: 'Abertura',
-      dataIndex: 'abertura',
-      key: 'abertura',
-      width: 160,
-      sorter: true,
-      defaultSortOrder: 'descend' as const,
-      render: (value: string) => dayjs(value).format('DD/MM/YYYY HH:mm'),
-    },
-    {
-      title: 'Responsável',
-      dataIndex: 'responsavel',
-      key: 'responsavel',
-      width: 150,
-      render: (value: string | null) => value ?? '—',
-    },
-  ];
+  const columns = getChamadosColumns();
 
   return (
     <>
@@ -221,6 +166,7 @@ export default function ChamadosListView() {
             total: data?.total,
             showSizeChanger: true,
             pageSizeOptions: ['10', '15', '25', '50'],
+            showTitle: false,
             showTotal: (total, range) => `${range[0]}-${range[1]} de ${total} chamados`,
           }}
           onRow={(record) => ({
