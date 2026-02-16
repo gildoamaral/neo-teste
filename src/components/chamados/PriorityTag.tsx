@@ -18,7 +18,7 @@ export function PriorityTag({ prioridade }: PriorityTagProps) {
   return (
     <Tag
       color={PRIORIDADE_COLORS[prioridade]}
-      style={{ fontWeight: prioridade === 'Crítica' ? 700 : 500 }}
+      style={{ fontWeight: prioridade === 'Crítica' ? 700 : 100 }}
     >
       {prioridade === 'Crítica' ? '⚠ ' : ''}
       {prioridade}

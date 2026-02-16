@@ -11,7 +11,7 @@ export const getChamadosColumns = (): ColumnsType<ChamadoComTimeline> => [
     key: 'id',
     width: 80,
     render: (value: number) =>
-      <span style={{ color: '#ec6725', fontWeight: 600 }}>#{value}</span>,
+      <span style={{ color: '#ec6725', fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace' }}>#{value}</span>,
   },
   {
     title: 'Título',
@@ -24,6 +24,7 @@ export const getChamadosColumns = (): ColumnsType<ChamadoComTimeline> => [
     dataIndex: 'area',
     key: 'area',
     width: 140,
+    render: (value: string) => <span className='text-gray-500'>{value}</span>,
   },
   {
     title: 'Prioridade',
@@ -51,7 +52,8 @@ export const getChamadosColumns = (): ColumnsType<ChamadoComTimeline> => [
     width: 160,
     sorter: true,
     defaultSortOrder: 'descend' as const,
-    render: (value: string) => dayjs(value).format('DD/MM/YYYY HH:mm'),
+    render: (value: string) =>
+      <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace' }} className='text-gray-500'>{dayjs(value).format('DD/MM/YYYY HH:mm')}</span>,
   },
   {
     title: 'Responsável',
