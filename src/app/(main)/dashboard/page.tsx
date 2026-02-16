@@ -4,7 +4,6 @@ import { useMemo, useState } from 'react';
 import { Row, Col, Card, Skeleton } from 'antd';
 import { useEstatisticas } from '@/hooks/useChamados';
 import {
-  DashboardHeader,
   StatCards,
   ChamadosPorAreaChart,
   DistribuicaoPrioridadeChart,
@@ -23,7 +22,6 @@ export default function DashboardPage() {
   if (isLoading || !data) {
     return (
       <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-        <DashboardHeader />
         <Row gutter={[16, 16]}>
           {[1, 2, 3, 4].map((i) => (
             <Col xs={24} sm={12} lg={6} key={i}>
@@ -53,7 +51,6 @@ export default function DashboardPage() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-      <DashboardHeader />
       <StatCards stats={stats} />
       <Row gutter={[16, 16]}>
         <Col xs={24} md={12}>

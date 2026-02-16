@@ -3,8 +3,6 @@ import { Avatar, Button, Layout, Menu, Space, Typography } from 'antd'
 import { usePathname, useRouter } from 'next/navigation'
 
 interface SiderProps {
-  viewMode: 'tech' | 'manager';
-  setViewMode: (mode: 'tech' | 'manager') => void;
   collapsed: boolean;
   setCollapsed: (collapsed: boolean) => void;
 }

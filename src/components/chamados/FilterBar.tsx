@@ -19,9 +19,11 @@ export function FilterBar({
   };
 
   return (
-    <Card style={{ marginBottom: 16 }}>
+    <Card style={{ background: "none", border: 'none', padding: 0 }} 
+      styles={{ body: { padding: "0 10px 10px 10px" } }}
+      >
       <Row gutter={[12, 12]} align="middle">
-        <Col xs={24} sm={12} md={6}>
+        <Col xs={24} sm={12} md={9}>
           <Search
             placeholder="Título, ID, Equipamento..."
             value={searchInput}
@@ -34,7 +36,7 @@ export function FilterBar({
             }}
           />
         </Col>
-        <Col xs={24} sm={12} md={4}>
+        <Col xs={24} sm={12} md={3}>
           <Select
             placeholder="Status"
             value={filters.status}
@@ -44,7 +46,7 @@ export function FilterBar({
             style={{ width: '100%' }}
           />
         </Col>
-        <Col xs={24} sm={12} md={4}>
+        <Col xs={24} sm={12} md={3}>
           <Select
             placeholder="Prioridade"
             value={filters.prioridade}
@@ -54,7 +56,7 @@ export function FilterBar({
             style={{ width: '100%' }}
           />
         </Col>
-        <Col xs={24} sm={12} md={4}>
+        <Col xs={24} sm={12} md={3}>
           <Select
             placeholder="Área"
             value={filters.area}
@@ -89,7 +91,7 @@ export function FilterBar({
       </Row>
       <Row style={{ marginTop: 5 }}>
         <Col>
-          <span style={{ fontSize: 12, color: '#888' }}>
+          <span style={{ fontSize: 12, color: '#888', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif' }}>
             {!filters.status && !filters.prioridade && !filters.area && !filters.busca ? (
               'Nenhum filtro ativo'
             ) : (

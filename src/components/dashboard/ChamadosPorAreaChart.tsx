@@ -39,6 +39,7 @@ export function ChamadosPorAreaChart({ data }: ChamadosPorAreaChartProps) {
             fill={BAR_COLOR}
             radius={[4, 4, 0, 0]}
             name="Chamados"
+            barSize={40}
           />
         </BarChart>
       </ResponsiveContainer>

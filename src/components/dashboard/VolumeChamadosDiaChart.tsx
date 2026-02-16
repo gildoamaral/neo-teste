@@ -54,7 +54,7 @@ export function VolumeChamadosDiaChart({
             dataKey="date"
             tick={{ fontSize: 11 }}
             tickFormatter={(value) => format(new Date(value), 'dd/MM')}
-            interval="preserveStartEnd"
+            interval={Math.max(1, Math.floor(data.length / 10))}
           />
           <YAxis allowDecimals={false} tick={{ fontSize: 12 }} />
           <RechartsTooltip

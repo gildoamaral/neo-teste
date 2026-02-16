@@ -22,7 +22,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
       <Layout>
         <Header />
 
-        <Content style={{ margin: '24px 16px', padding: 24, minHeight: 280, background: '#F9FAFB', borderRadius: 8 }}>
+        <Content style={{ margin: '0 16px', padding: 5, minHeight: 280, borderRadius: 8 }}>
           {children}
         </Content>
       </Layout>
