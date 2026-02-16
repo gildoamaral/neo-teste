@@ -3,6 +3,7 @@ import { getMockDatabase } from './mockData';
 
 const DELAY_MS = 800; // Simula latência
 
+
 const priorityWeight = {
   'Crítica': 4,
   'Alta': 3,
