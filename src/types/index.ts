@@ -97,3 +97,32 @@ export interface SiderProps {
   drawerOpen: boolean;
   setDrawerOpen: (open: boolean) => void;
 }
+
+export interface ChartDataItem {
+  name: string;
+  value: number;
+}
+
+export interface DistribuicaoPrioridadeChartProps {
+  data: ChartDataItem[];
+}
+
+export interface ChartDataItem {
+  name: string;
+  value: number;
+}
+
+export interface ChamadosPorAreaChartProps {
+  data: ChartDataItem[];
+}
+
+export interface LineChartDataItem {
+  date: string;
+  chamados: number;
+}
+
+export interface VolumeChamadosDiaChartProps {
+  data: LineChartDataItem[];
+  days: number;
+  onDaysChange: (days: number) => void;
+}

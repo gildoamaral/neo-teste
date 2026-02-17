@@ -10,21 +10,10 @@ import {
 } from 'recharts';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import { VolumeChamadosDiaChartProps } from '@/types';
 
 const { Text } = Typography;
-
 const BAR_COLOR = '#ec6725';
-
-interface LineChartDataItem {
-  date: string;
-  chamados: number;
-}
-
-interface VolumeChamadosDiaChartProps {
-  data: LineChartDataItem[];
-  days: number;
-  onDaysChange: (days: number) => void;
-}
 
 export function VolumeChamadosDiaChart({
   data,
@@ -33,7 +22,7 @@ export function VolumeChamadosDiaChart({
 }: VolumeChamadosDiaChartProps) {
   return (
     <Card
-      title={<Text strong style={{ fontSize: 14 }}>Volume de Chamados por Dia</Text>}
+      title={<Text strong style={{ fontSize: 14 }}>Chamados por Dia</Text>}
       extra={
         <Segmented
           size="small"
@@ -46,7 +35,7 @@ export function VolumeChamadosDiaChart({
           onChange={(value) => onDaysChange(value as number)}
         />
       }
-      styles={{ body: { padding: '12px 16px' } }}
+      styles={{ body: { padding: '12px 16px', userSelect: 'none' } }}
     >
       <ResponsiveContainer width="100%" height={250}>
         <LineChart data={data} margin={{ top: 5, right: 5, left: -10, bottom: 5 }}>
@@ -59,6 +48,7 @@ export function VolumeChamadosDiaChart({
           />
           <YAxis allowDecimals={false} tick={{ fontSize: 11 }} width={30} />
           <RechartsTooltip
+            cursor={false}
             labelFormatter={(value) =>
               format(new Date(value), "dd 'de' MMMM", { locale: ptBR })
             }

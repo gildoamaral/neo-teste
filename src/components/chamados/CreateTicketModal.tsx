@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect } from 'react';
 import { Modal, Form, Input, Select, App } from 'antd';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -34,6 +35,22 @@ export default function NovoChamadoModal({ open, onClose }: NovoChamadoModalProp
     },
   });
 
+  useEffect(() => {
+    if (!open) return;
+
+    window.history.pushState({ modal: 'novo-chamado' }, '');
+
+    const handlePopState = () => {
+      reset();
+      onClose();
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+    };
+  }, [open, onClose, reset]);
+
   const onSubmit = async (data: NovoChamadoForm) => {
     try {
       await criarMutation.mutateAsync({
@@ -42,15 +59,14 @@ export default function NovoChamadoModal({ open, onClose }: NovoChamadoModalProp
       });
       message.success('Chamado criado com sucesso!');
       reset();
-      onClose();
+      window.history.back();
     } catch {
       message.error('Erro ao criar chamado. Tente novamente.');
     }
   };
 
   const handleCancel = () => {
-    reset();
-    onClose();
+    window.history.back();
   };
 
   return (

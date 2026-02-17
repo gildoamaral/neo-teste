@@ -1,3 +1,4 @@
+import { DistribuicaoPrioridadeChartProps } from '@/types';
 import { Card, Typography } from 'antd';
 import {
   PieChart,
@@ -9,17 +10,7 @@ import {
 } from 'recharts';
 
 const { Text } = Typography;
-
 const PIE_COLORS = ['#cf1322', '#fa8c16', '#108ee9', '#87d068'];
-
-interface ChartDataItem {
-  name: string;
-  value: number;
-}
-
-interface DistribuicaoPrioridadeChartProps {
-  data: ChartDataItem[];
-}
 
 export function DistribuicaoPrioridadeChart({
   data,
@@ -27,7 +18,7 @@ export function DistribuicaoPrioridadeChart({
   return (
     <Card
       title={<Text strong>Distribuição por Prioridade</Text>}
-      styles={{ body: { padding: '12px 16px' } }}
+      styles={{ body: { padding: '12px 16px', userSelect: 'none' } }}
     >
       <ResponsiveContainer width="100%" height={250}>
         <PieChart>
@@ -48,10 +39,11 @@ export function DistribuicaoPrioridadeChart({
               <Cell
                 key={`cell-${index}`}
                 fill={PIE_COLORS[index % PIE_COLORS.length]}
+                style={{ outline: 'none' }}
               />
             ))}
           </Pie>
-          <RechartsTooltip />
+          <RechartsTooltip cursor={false}  />
           <Legend wrapperStyle={{ fontSize: 12 }} />
         </PieChart>
       </ResponsiveContainer>

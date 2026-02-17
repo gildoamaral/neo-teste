@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect } from 'react';
 import { Drawer, Timeline, Typography, Skeleton, Space } from 'antd';
 import {
   ClockCircleOutlined,
@@ -51,6 +52,27 @@ const DetailItem = ({ icon, label, value }: DetailItemProps) => (
 export function DrawerDetail({ chamado, open, onClose, loading }: DrawerDetailProps) {
   const { isMobile } = useBreakpoint();
 
+  // Handle mobile back button: push a history entry when drawer opens,
+  // and close the drawer on popstate (back button press)
+  useEffect(() => {
+    if (!open) return;
+
+    window.history.pushState({ drawer: 'chamado-detail' }, '');
+
+    const handlePopState = () => {
+      onClose();
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+    };
+  }, [open, onClose]);
+
+  const handleClose = () => {
+    window.history.back();
+  };
+
   return (
     <Drawer
       title={
@@ -77,7 +99,7 @@ export function DrawerDetail({ chamado, open, onClose, loading }: DrawerDetailPr
         ) : 'Detalhes do chamado'
       }
       open={open}
-      onClose={onClose}
+      onClose={handleClose}
       size={isMobile ? '100%' : 520}
       styles={{ body: { paddingTop: 20, padding: isMobile ? 16 : 24 } }}
     >

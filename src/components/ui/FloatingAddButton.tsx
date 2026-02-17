@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { Button } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 
@@ -8,6 +9,27 @@ interface FloatingAddButtonProps {
 }
 
 export function FloatingAddButton({ onClick }: FloatingAddButtonProps) {
+  const [hidden, setHidden] = useState(false);
+
+  useEffect(() => {
+    const scrollContainer = document.querySelector('.main-content-area') as HTMLElement | null;
+    const target = scrollContainer ?? window;
+
+    const handleScroll = () => {
+      if (scrollContainer) {
+        const { scrollTop, scrollHeight, clientHeight } = scrollContainer;
+        setHidden(scrollTop + clientHeight >= scrollHeight - 10);
+      } else {
+        const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
+        setHidden(scrollTop + clientHeight >= scrollHeight - 10);
+      }
+    };
+
+    target.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
+    return () => target.removeEventListener('scroll', handleScroll);
+  }, []);
+
   return (
     <Button
       type="primary"
@@ -26,6 +48,10 @@ export function FloatingAddButton({ onClick }: FloatingAddButtonProps) {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
+        transition: 'opacity 0.3s ease, transform 0.3s ease',
+        opacity: hidden ? 0 : 1,
+        transform: hidden ? 'scale(0.8)' : 'scale(1)',
+        pointerEvents: hidden ? 'none' : 'auto',
       }}
     />
   );
