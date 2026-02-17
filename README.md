@@ -1,36 +1,84 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Teste Técnico Neo Estech
 
-## Getting Started
-
-First, run the development server:
+## 🚀 Como Rodar o Projeto
 
 ```bash
+# Clone o repositório
+git clone https://github.com/gildoamaral/neo-teste.git
+
+# Entre na pasta do projeto
+cd neo-teste
+
+# Instale as dependências
+npm install
+
+# Inicie o servidor de desenvolvimento
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Acesse [http://localhost:3000](http://localhost:3000) no navegador.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🏗️ Decisões de Arquitetura
 
-## Learn More
+### Estrutura de Componentes
 
-To learn more about Next.js, take a look at the following resources:
+O projeto foi organizado seguindo princípios de separação de responsabilidades e componentização. Estrutura como definida abaixo:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+#### Componentes não reutilizáveis
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- <strong>src/components/chamados -</strong> Aqui foram colocados os componentes de trechos da pagina de chamados
+- <strong>src/components/dashboard -</strong> Aqui foram colocados os componentes de trechos da pagina de dashboard
+- <strong>src/components/layout -</strong> Componentes de layout (Header, Sider...)
 
-## Deploy on Vercel
+#### Componentes reutilizáveis
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- <strong>src/components/ui -</strong> Componentes reutilizáveis, genéricos, trechos de ui.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+#### Layout Responsivo
+
+- **Layout Híbrido**: Desktop com Sider fixo + Header; Mobile com Drawer menu + Header com hamburger
+- **Responsive Design**: Componentes adaptativos usando hook `useBreakpoint` centralizado
+- **Barra de Carregamento**: A barra aparece conforme determinação do fetching do Tanstack Query
+
+
+---
+
+## ⚡ Decisões de Performance
+
+### Estratégias para Alto Volume
+
+- **Paginação** (default 15 itens por pagina, podendo ser exibido até 50)
+- Cards no mobile com **renderização condicional**
+- **Tanstack Query para cache** através do staleTime, impedindo requisições redundantes
+- **Debounce** para barra de pesquisa, esperando 1000 após o usuário acabar de digitar
+- **Server Side Pagination** considerando backend simulado, operações de paginação são apenas resgatadas pelo frontend, mas criadas pelo backend
+
+- Foi considerado **Virtualização**, mas descartado por conta do uso de Paginação.
+- Foi considerado **Lazy Loading**, mas descartado por não haverem dados pesados sendo carregados (como imagens, componentes complexos, etc)
+
+---
+
+## 💭 O que Faria Diferente se Tivesse Mais Tempo
+* Daria mais retoques para a animações suaves, principalmente em dispositivos móveis
+* Limparia mais os meus componentes, para ter arquivos menores e mais componentes reutilizáveis
+* Utilizaria mais memorização de componentes e funções com useMemo
+* Faria retoques visuais, buscaria bugs para corrigir.
+
+---
+
+## 📝 Perguntas Conceituais
+
+### 1. Cache e mutação
+Eu utilizaria um hook de mutação com optimistic update.
+No onMutate, cancelaria queries em andamento e atualizaria manualmente apenas os caches em que as chaves de filtro são compatíveis com o novo chamado (por exemplo, status = "Aberto" e área = "Refrigeração").
+No onSuccess, substituiria o item pelo retorno do servidor. Queries com filtros que não incluem o novo chamado não precisam ser invalidadas. Caso existam listas agregadas, faria invalidação seletiva dessas chaves.
+
+### 2. Performance
+
+### 3. Arquitetura de Componentes
+
+---
+
+**Desenvolvido por Gildo Amaral** | [GitHub](https://github.com/gildoamaral/neo-teste)
