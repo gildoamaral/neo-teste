@@ -49,14 +49,14 @@ O projeto foi organizado seguindo princípios de separação de responsabilidade
 
 ### Estratégias para Alto Volume
 
-- **Paginação** (default 15 itens por pagina, podendo ser exibido até 50)
-- Cards no mobile com **renderização condicional**
-- **Tanstack Query para cache** através do staleTime, impedindo requisições redundantes
-- **Debounce** para barra de pesquisa, esperando 1000 após o usuário acabar de digitar
-- **Server Side Pagination** considerando backend simulado, operações de paginação são apenas resgatadas pelo frontend, mas criadas pelo backend
+* **Paginação** (default 15 itens por pagina, podendo ser exibido até 50)
+* Cards no mobile com **renderização condicional**
+* **Tanstack Query para cache** através do staleTime, impedindo requisições redundantes
+* **Debounce** para barra de pesquisa, esperando 1000 após o usuário acabar de digitar
+* **Server Side Pagination** considerando backend simulado, operações de paginação são apenas resgatadas pelo frontend, mas criadas pelo backend
 
-- Foi considerado **Virtualização**, mas descartado por conta do uso de Paginação.
-- Foi considerado **Lazy Loading**, mas descartado por não haverem dados pesados sendo carregados (como imagens, componentes complexos, etc)
+* Foi considerado **Virtualização**, mas descartado por conta do uso de Paginação.
+* Foi considerado **Lazy Loading**, mas descartado por não haverem dados pesados sendo carregados (como imagens, componentes complexos, etc)
 
 ---
 
@@ -76,9 +76,17 @@ No onMutate, cancelaria queries em andamento e atualizaria manualmente apenas os
 No onSuccess, substituiria o item pelo retorno do servidor. Queries com filtros que não incluem o novo chamado não precisam ser invalidadas. Caso existam listas agregadas, faria invalidação seletiva dessas chaves.
 
 ### 2. Performance
+Para este caso, esta seria minha estratégia:
+1. **Virtualização** para cuidar do impacto imediato. Em vez de renderizar todas as linhas, serão renderizadas apenas as que o usuário tem acesso na tela (Até mesmo o atributo *Virtual* no AntD);
+2. **Infinite Scroll** para cuidar dos dados entrando em pedaços(alternativa à Paginação. usaria o proprio fetchNextPage no Tanstack Query)
+3. **Lazy Loading** a depender dos dados entrando. Por exemplo, em imagens pesadas ou dados complexos.
+4. **Debouce** ou botão de pesquisa em inputs de filtro. Para impedir que se façam multiplas chamadas desnecessárias
 
 ### 3. Arquitetura de Componentes
+<StatusBadge /> seria um componente generico, que precisa receber apenas o essencial (cor, texto, icone). assim, eu utilizaria de outros componentes (sejam eles do AntD ou outra lib) para criar os efeitos necessarios (Composition Pattern).
+No caso do exemplo, poderia envolver ele em um componente tooltip, em um componente dropdown, um button... Ou apenas utiliza-lo como visual. 
+
 
 ---
 
-**Desenvolvido por Gildo Amaral** | [GitHub](https://github.com/gildoamaral/neo-teste)
+**Desenvolvido por Marco Antonio Gil** | [GitHub](https://github.com/gildoamaral)
