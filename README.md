@@ -18,6 +18,8 @@ npm run dev
 
 Acesse [http://localhost:3000](http://localhost:3000) no navegador.
 
+#### Também disponível em https://neo-teste.vercel.app/chamados
+
 ---
 
 ## 🏗️ Decisões de Arquitetura
