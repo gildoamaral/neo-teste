@@ -1,6 +1,7 @@
 import { MenuOutlined } from '@ant-design/icons';
 import { Button, Layout, Space, Typography } from 'antd';
 import { usePathname } from 'next/navigation';
+import { LoadingBar } from '@/components/ui/LoadingBar';
 
 interface HeaderProps {
   isMobile: boolean;
@@ -38,7 +39,8 @@ const AppHeader = ({ isMobile, onMenuClick }: HeaderProps) => {
       justifyContent: 'space-between',
       height: 64,
       borderBottom: '1px solid #e8e8e8',
-      marginBottom: 16
+      marginBottom: 16,
+      position: 'relative',
     }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
         {isMobile && (
@@ -66,6 +68,7 @@ const AppHeader = ({ isMobile, onMenuClick }: HeaderProps) => {
           </Text>
         </Space>
       )}
+      <LoadingBar />
     </Header>
   )
 }

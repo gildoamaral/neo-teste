@@ -5,3 +5,4 @@ export { EmptyState } from "./EmptyState";
 export { ErrorState } from "./ErrorState";
 export { ChamadoCard } from "./ChamadoCard";
 export { FloatingAddButton } from "./FloatingAddButton";
+export { LoadingBar } from "./LoadingBar";

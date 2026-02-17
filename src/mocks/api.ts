@@ -44,7 +44,6 @@ export async function fetchChamados(
     );
   }
 
-  // Ordenação
   if (filters.ordenarPor === "abertura") {
     chamados.sort((a, b) => {
       const timeA = new Date(a.abertura).getTime();

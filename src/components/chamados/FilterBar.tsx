@@ -1,23 +1,29 @@
 import { useState } from 'react';
 import { Card, Row, Col, Input, Select, Button } from 'antd';
-import { DeleteOutlined, FilterOutlined } from '@ant-design/icons';
+import { DeleteOutlined, FilterOutlined, SearchOutlined } from '@ant-design/icons';
 import type { FilterBarProps } from '@/types';
 import { STATUS, PRIORIDADES, AREAS } from '@/types';
 import { useBreakpoint } from '@/hooks/useBreakpoint';
-
-const { Search } = Input;
+import { useDebouncedSearch } from '@/hooks/useDebouncedSearch';
 
 export function FilterBar({
   filters,
   onFilterChange,
   onClearFilters,
 }: Omit<FilterBarProps, 'onOpenModal'>) {
-  const [searchInput, setSearchInput] = useState(filters.busca ?? '');
   const [showFilters, setShowFilters] = useState(false);
   const { isMobile } = useBreakpoint();
 
-  const handleSearch = (value: string) => {
-    onFilterChange('busca', value || undefined);
+  const { searchInput, handleSearchChange, handleClearSearch } = useDebouncedSearch(
+    filters.busca ?? '',
+    (value) => onFilterChange('busca', value),
+    1000
+  );
+
+  const handleClearAll = () => {
+    handleClearSearch();
+    onClearFilters();
+    if (isMobile) setShowFilters(false);
   };
 
   const hasActiveFilters = !!(filters.status || filters.prioridade || filters.area || filters.busca);
@@ -30,16 +36,13 @@ export function FilterBar({
         <>
           <Row gutter={[8, 8]} align="middle">
             <Col flex="auto">
-              <Search
+              <Input
                 placeholder="Título, ID, Equipamento..."
                 value={searchInput}
-                onChange={(e) => setSearchInput(e.target.value)}
-                onSearch={handleSearch}
+                onChange={handleSearchChange}
+                prefix={<SearchOutlined style={{ color: '#bbb' }} />}
                 allowClear
-                onClear={() => {
-                  setSearchInput('');
-                  onFilterChange('busca', undefined);
-                }}
+                onClear={handleClearSearch}
               />
             </Col>
             <Col>
@@ -90,11 +93,7 @@ export function FilterBar({
               <Col xs={3}>
                 <Button
                   icon={<DeleteOutlined />}
-                  onClick={() => {
-                    setSearchInput('');
-                    onClearFilters();
-                    setShowFilters(false);
-                  }}
+                  onClick={handleClearAll}
                   block
                 />
               </Col>
@@ -104,16 +103,13 @@ export function FilterBar({
       ) : (
         <Row gutter={[8, 8]} align="middle">
           <Col flex="auto">
-            <Search
+            <Input
               placeholder="Título, ID, Equipamento..."
               value={searchInput}
-              onChange={(e) => setSearchInput(e.target.value)}
-              onSearch={handleSearch}
+              onChange={handleSearchChange}
+              prefix={<SearchOutlined style={{ color: '#bbb' }} />}
               allowClear
-              onClear={() => {
-                setSearchInput('');
-                onFilterChange('busca', undefined);
-              }}
+              onClear={handleClearSearch}
             />
           </Col>
           <Col>
@@ -149,10 +145,7 @@ export function FilterBar({
           <Col>
             <Button
               icon={<DeleteOutlined />}
-              onClick={() => {
-                setSearchInput('');
-                onClearFilters();
-              }}
+              onClick={handleClearAll}
             >
               Limpar
             </Button>

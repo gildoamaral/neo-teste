@@ -128,7 +128,6 @@ export default function ChamadosListView() {
           )}
         </div>
       ) : (
-        /* Desktop: table */
         <Table
           dataSource={data?.data}
           columns={columns}
